@@ -2,9 +2,11 @@ package io.ohalloran.crypto;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -25,13 +27,9 @@ public class MessagesActivity extends ActionBarActivity {
                 root = view;
             ImageView pic = (ImageView) root.findViewById(R.id.message_image);
             TextView textView = (TextView) root.findViewById(R.id.message_text);
-
-            //  Message data = getItem(i);
-
-
-            /*textView.setGravity(side);
-            picHost.setForegroundGravity(side
-*/
+            int gravity = i % 2 == 0 ? Gravity.LEFT : Gravity.RIGHT;
+            ((LinearLayout.LayoutParams) pic.getLayoutParams()).gravity = gravity;
+            textView.setGravity(gravity);
             return root;
         }
 
