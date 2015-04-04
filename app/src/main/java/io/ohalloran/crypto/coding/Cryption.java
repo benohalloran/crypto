@@ -7,10 +7,12 @@ import android.graphics.Bitmap;
  */
 public class Cryption {
     public static String decode(Bitmap map) {
+
         return "DEFAULT";
     }
 
-    public static Bitmap encode(String msg) {
+    public static Bitmap encode(String msg, Bitmap pic) {
+        
         return null;
     }
 }
