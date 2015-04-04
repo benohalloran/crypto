@@ -4,6 +4,7 @@ import android.widget.BaseAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -20,7 +21,11 @@ public abstract class ListAdapter<T> extends BaseAdapter {
         this(new ArrayList<T>());
     }
 
-    public ListAdapter(T[] array) {
+    public ListAdapter(Collection<T> collection) {
+        this((T[]) collection.toArray());
+    }
+
+    public ListAdapter(T... array) {
         this(Arrays.asList(array));
     }
 

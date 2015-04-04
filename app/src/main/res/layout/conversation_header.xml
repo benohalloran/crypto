@@ -11,6 +11,7 @@
         style="?android:attr/quickContactBadgeStyleWindowLarge" />
 
     <LinearLayout
+        android:paddingLeft="@dimen/activity_horizontal_margin"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight=".4"
@@ -18,6 +19,7 @@
 
         <TextView
             android:layout_weight=".9"
+            android:id="@+id/header_name"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="TOP" />
@@ -25,8 +27,12 @@
         <TextView
             android:layout_weight=".4"
             android:layout_width="match_parent"
+            android:id="@+id/header_preview"
             android:layout_height="match_parent"
-            android:text="bottom" />
+            android:ellipsize="marquee"
+            android:maxLines="3"
+            android:visibility="gone"
+            android:text="message preview" />
     </LinearLayout>
 
 </LinearLayout>

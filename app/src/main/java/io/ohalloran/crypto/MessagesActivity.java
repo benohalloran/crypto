@@ -15,32 +15,21 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import io.ohalloran.crypto.data.Message;
+import io.ohalloran.crypto.data.Person;
 import io.ohalloran.crypto.utils.ListAdapter;
 
 public class MessagesActivity extends ActionBarActivity implements View.OnFocusChangeListener, View.OnClickListener {
+    public static String PERSON_ID = "person_id";
+
     ListView listView;
     TextView emptyText;
     EditText messageInput;
     ImageButton imageSource;
     Button sendButton;
 
-    ListAdapter<String> adapter = new ListAdapter<String>(new String[]{"one", "two", "three"}) {
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            View root;
-            if (view == null)
-                root = getLayoutInflater().inflate(R.layout.single_message, viewGroup, false);
-            else
-                root = view;
-            ImageView pic = (ImageView) root.findViewById(R.id.message_image);
-            TextView textView = (TextView) root.findViewById(R.id.message_text);
-            int gravity = i % 2 == 0 ? Gravity.LEFT : Gravity.RIGHT;
-            ((LinearLayout.LayoutParams) pic.getLayoutParams()).gravity = gravity;
-            textView.setGravity(gravity);
-            return root;
-        }
-
-    };
+    ListAdapter<Message> adapter;
+    Person data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +45,29 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
         messageInput.setOnFocusChangeListener(this);
         imageSource.setOnClickListener(this);
         sendButton.setOnClickListener(this);
-    }
 
+        int personId = getIntent().getExtras().getInt(PERSON_ID, 0);
+
+        data = Person.getPersonFromID(personId);
+        setTitle(data.name);
+
+        adapter = new ListAdapter<Message>(Message.getMessages(data)) {
+            @Override
+            public View getView(int i, View view, ViewGroup viewGroup) {
+                View root = view;
+                if (root == null)
+                    root = getLayoutInflater().inflate(R.layout.single_message, viewGroup, false);
+                ImageView pic = (ImageView) root.findViewById(R.id.message_image);
+                TextView textView = (TextView) root.findViewById(R.id.message_text);
+                Message data = getItem(i);
+                int gravity = data.recepient == Person.ME ? Gravity.LEFT : Gravity.RIGHT;
+                ((LinearLayout.LayoutParams) pic.getLayoutParams()).gravity |= gravity;
+                textView.setGravity(gravity);
+                textView.setText(data.timeSent.toString());
+                return root;
+            }
+        };
+    }
 
     @Override
     public void onFocusChange(View view, boolean b) {
