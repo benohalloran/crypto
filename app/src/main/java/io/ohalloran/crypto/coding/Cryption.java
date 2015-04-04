@@ -64,17 +64,20 @@ public class Cryption {
 
         int pixels[] =new int[map.getHeight() * map.getWidth()];
         map.getPixels(pixels,0,map.getWidth(),0,0,map.getWidth(),map.getHeight());
+
+        //
+
+
         byte[] by = new byte[map.getWidth() * map.getHeight()];
+
 
         int i =0;
         for(int pixel:pixels){
-            //Log.d("pixels",pixel + "");
             int top =       ((pixel&0x03000000)>>6*4)<<6;
             int midtop =    ((pixel&0x00030000)>>4*4)<<4;
             int midbot =    ((pixel&0x00000300)>>2*4)<<2;
             int bot =       ((pixel&0x00000003));
-            //Log.d("bytes",(byte) (top + midtop + midbot + bot) + "");
-            by[i] = (byte) ( bot+ midbot+ midtop+top);
+            by[i] = (byte) (top + midtop + midbot + bot);
 
             i++;
         }
@@ -99,20 +102,36 @@ public class Cryption {
         byte bmsg[] = msg.getBytes();
         int i = 0;
         for(byte by :bmsg){
-            int top = (by&0xC0)>>6;
-            int midtop = (by&0x30)>>4;
-            int midbot = (by&0x0C)>>2;
+            int top = by&0xC0;
+            int midtop = by&0x30;
+            int midbot = by&0x0C;
             int bot = by&0x03;
-            pixels[i] = pixels[i] ^ (top <<(6*4));
-            pixels[i] = pixels[i] ^ (midtop <<(4*4));
-            pixels[i] = pixels[i] ^ (midbot <<(2*4));
-            pixels[i] = pixels[i] ^ bot;
+            pixels[i] = pixels[i] | (top <<(6*4));
+            pixels[i] = pixels[i] | (midtop <<(4*4));
+            pixels[i] = pixels[i] | (midbot <<(2*4));
+            pixels[i] = pixels[i] | bot;
+
             i++;
         }
-        pixels[i] = pixels[i] | (0x03 <<(6*4));
-        pixels[i] = pixels[i] | (0x03 <<(4*4));
-        pixels[i] = pixels[i] | (0x03 <<(2*4));
-        pixels[i] = pixels[i] | 0x03;
+        pixels[i] = pixels[i] | (0xC0 <<(6*4));
+        pixels[i] = pixels[i] | (0x40 <<(4*4));
+        pixels[i] = pixels[i] | (0x0C <<(2*4));
+        pixels[i] = pixels[i] | 0x04;
+       // for(int i = 0; i<bmsg.length; i++){
+       //     int offset = (i%2)*8;
+        //    pixels[i]
+        //}
+
+        /*Boolean bitmsg[] = getBitArray(bmsg);
+        int i = 0;
+        int j = 0;
+        int k = 0;
+        for(Boolean bit : bitmsg){
+
+            i = (i + 1)%4;
+
+        }*/
+
 
         return Bitmap.createBitmap(pixels,0,map.getWidth(),map.getWidth(),map.getHeight(), Bitmap.Config.ARGB_8888);
 
