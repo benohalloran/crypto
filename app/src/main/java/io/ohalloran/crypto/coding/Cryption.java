@@ -59,8 +59,8 @@ public class Cryption {
     }
 
     public static byte[] pictureDecode(Bitmap map) {
-        //ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        //map.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        map.compress(Bitmap.CompressFormat.PNG, 100, stream);
 
         int pixels[] =new int[map.getHeight() * map.getWidth()];
 
@@ -103,7 +103,6 @@ public class Cryption {
 
         int pixels[] =new int[map.getHeight() * map.getWidth()];
         map.getPixels(pixels,0,map.getWidth(),0,0,map.getWidth(),map.getHeight());
-
 
         int bitmask =0xFCFCFCFC;
 
