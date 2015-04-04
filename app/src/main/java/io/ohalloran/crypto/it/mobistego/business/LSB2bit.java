@@ -53,7 +53,7 @@ public class LSB2bit {
      * @return Encoded message image.
      */
     public static byte[] encodeMessage(int[] oneDPix, int imgCols, int imgRows,
-                                       byte[] message) {
+                                       String str) {
 
         int channels = 3;
         int shiftIndex = 4;
