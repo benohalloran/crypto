@@ -26,10 +26,10 @@ public class ConversationsActivity extends ActionBarActivity {
         setContentView(R.layout.activity_conversations);
         Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.bird2);
         //Log.d("encryption", Cryption.pictureDecode(image));
-        String s = "alkheuafuake";
-        testRSA(s);
+        String s = "alkheuafuake.kacnac,a";
+        //testRSA(s);
         //testEncodeDecode(image,s);
-        //testAll(image,s);
+        testAll(image,s);
 
 
 
@@ -134,39 +134,13 @@ public class ConversationsActivity extends ActionBarActivity {
 
         String decodeCipher= Cryption.mobiDecode(image2);
 
-        String decodedmessage = Cryption.RSAtoString(decodeCipher, prk);
+        String decodeMessage = Cryption.RSAtoString(decodeCipher, prk);
+
+        Log.d("Encoded Message", m);
+        Log.d("Decoded Message", decodeMessage);
 
         pic1.setImageBitmap(image);
         pic2.setImageBitmap(image2);
-
-        try{
-            String encString = new String(decBytes,"UTF-8");
-
-            String decString = Cryption.RSAtoString(encString,prk);
-
-            String in = "";
-            String out = "";
-
-            Log.d("RSAbytein", in);
-            Log.d("RSAbyteout", out);
-
-            Log.d("EncodedString", m);
-            Log.d("RSAinputString", cipher);
-            Log.d("RSAoutputString", encString);
-            Log.d("DecodedString", decString);
-
-            for(int i = 0; i<encodedBytes.length; i++){
-                if(encodedBytes[i] != decBytes[i]){
-                    Log.d("Not equal here", i +"");
-                    //image.getPixels(pixels,);
-                    //Log.d("Pixel Value here", )
-                }
-            }
-        }
-        catch (Exception e){
-            Log.e("testEncodeDecode", "unsupported standard");
-        }
-
 
     }
 
