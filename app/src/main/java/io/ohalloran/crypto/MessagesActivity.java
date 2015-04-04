@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,17 +19,16 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.orm.query.Condition;
-import com.orm.query.Select;
-
 import java.util.Collections;
 import java.util.List;
 
+import io.ohalloran.crypto.coding.Cryption;
 import io.ohalloran.crypto.data.Message;
 import io.ohalloran.crypto.data.Person;
+import io.ohalloran.crypto.parse.ParseFactory;
 import io.ohalloran.crypto.utils.ListAdapter;
 
-public class MessagesActivity extends ActionBarActivity implements View.OnFocusChangeListener, View.OnClickListener {
+public class MessagesActivity extends ActionBarActivity implements View.OnFocusChangeListener, View.OnClickListener, ParseFactory.OnParseUpdateListener {
     public static String PERSON_ID = "person_id";
 
     ListView listView;
@@ -53,14 +53,15 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
         imageSource.setOnClickListener(this);
         sendButton.setOnClickListener(this);
 
-        long personId = getIntent().getExtras().getLong(PERSON_ID, 1);
-        recep = Person.findById(Person.class, personId);
-
-        List<Message> messages = Select.from(Message.class)
-                .or(Condition.prop("sender").like(recep.name),
-                        Condition.prop("recip").like(recep.name)).list();
-        Collections.sort(messages);
-        adapter = new ListAdapter<Message>(messages) {
+        try {
+            recep = ParseFactory.getByID(getIntent().getExtras().getString(PERSON_ID));
+            setTitle(recep.userName());
+        } catch (Exception e) {
+            Log.wtf("Message Activity", "Error loading clicked", e);
+        }
+        ParseFactory.refresh(this);
+        Collections.sort(ParseFactory.getMessages()); //TODO filter
+        adapter = new ListAdapter<Message>(ParseFactory.getMessages()) {
             @Override
             public View getView(int i, View view, ViewGroup viewGroup) {
                 View root = view;
@@ -69,16 +70,23 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
                 ImageView pic = (ImageView) root.findViewById(R.id.message_image);
                 TextView textView = (TextView) root.findViewById(R.id.message_text);
                 Message data = getItem(i);
-                int gravity = data.recip.equals(recep.name) ? Gravity.LEFT : Gravity.RIGHT;
+                int gravity = ParseFactory.getPersonWhoPosted(data).equals(ParseFactory.getLocalUser())
+                        ? Gravity.LEFT : Gravity.RIGHT;
                 ((LinearLayout.LayoutParams) pic.getLayoutParams()).gravity = gravity;
 
 
-                textView.setText(data.date);
+                textView.setText(data.getUpdatedAt().toString());
                 textView.setGravity(gravity);
 
 //                pic.forceLayout();
 //                textView.forceLayout();
                 return root;
+            }
+
+            @Override
+            public void updateData(List<Message> messages) {
+                Collections.sort(messages);
+                super.updateData(messages);
             }
         };
         listView.setAdapter(adapter);
@@ -90,15 +98,16 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
                 View popup = getLayoutInflater().inflate(R.layout.message_reveal, null, false);
                 AlertDialog.Builder builder = new AlertDialog.Builder(MessagesActivity.this)
                         .setView(popup).setCancelable(true);
-                ((TextView) popup.findViewById(R.id.decrypted_msg)).setText(data.messageText);
+                Bitmap img = BitmapFactory.decodeByteArray(data.getImageData(), 0,
+                        data.getImageData().length, new BitmapFactory.Options());
+
+                ((TextView) popup.findViewById(R.id.decrypted_msg)).setText(Cryption.decode(img));
                 ((ImageView) popup.findViewById(R.id.source_image))
-                        .setImageBitmap(BitmapFactory.decodeByteArray(data.imageData, 0,
-                                data.imageData.length, new BitmapFactory.Options()));
+                        .setImageBitmap(img);
                 builder.show();
 
             }
         });
-        setTitle(recep.name);
     }
 
     @Override
@@ -121,5 +130,10 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
                 //TODO send for encoding
                 break;
         }
+    }
+
+    @Override
+    public void onComplete() {
+        adapter.updateData(ParseFactory.getMessages());
     }
 }
