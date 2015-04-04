@@ -3,6 +3,7 @@ package io.ohalloran.crypto.utils;
 import android.widget.BaseAdapter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -19,6 +20,10 @@ public abstract class ListAdapter<T> extends BaseAdapter {
         this(new ArrayList<T>());
     }
 
+    public ListAdapter(T[] array) {
+        this(Arrays.asList(array));
+    }
+
 
     @Override
     public int getCount() {
@@ -32,6 +37,7 @@ public abstract class ListAdapter<T> extends BaseAdapter {
 
     @Override
     public long getItemId(int i) {
-        return data.get(i).hashCode();
+        return 0;
+        //TODO return data.get(i).hashCode();
     }
 }

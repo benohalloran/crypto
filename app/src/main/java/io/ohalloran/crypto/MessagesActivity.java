@@ -1,10 +1,15 @@
 package io.ohalloran.crypto;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -12,12 +17,14 @@ import android.widget.TextView;
 
 import io.ohalloran.crypto.utils.ListAdapter;
 
-public class MessagesActivity extends ActionBarActivity {
+public class MessagesActivity extends ActionBarActivity implements View.OnFocusChangeListener, View.OnClickListener {
     ListView listView;
     TextView emptyText;
+    EditText messageInput;
+    ImageButton imageSource;
+    Button sendButton;
 
-    ListAdapter<Message> adapter = new ListAdapter<Message>() {
-
+    ListAdapter<String> adapter = new ListAdapter<String>(new String[]{"one", "two", "three"}) {
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             View root;
@@ -33,10 +40,6 @@ public class MessagesActivity extends ActionBarActivity {
             return root;
         }
 
-        @Override
-        public int getCount() {
-            return 10;
-        }
     };
 
     @Override
@@ -44,15 +47,37 @@ public class MessagesActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages);
         listView = (ListView) findViewById(android.R.id.list);
-        emptyText = (TextView) findViewById(android.R.id.text1);
-
         listView.setAdapter(adapter);
-        handleVisabilities();
 
+        messageInput = (EditText) findViewById(R.id.message_input);
+        imageSource = (ImageButton) findViewById(R.id.image_mask);
+        sendButton = (Button) findViewById(R.id.send_button);
+
+        messageInput.setOnFocusChangeListener(this);
+        imageSource.setOnClickListener(this);
+        sendButton.setOnClickListener(this);
     }
 
-    private void handleVisabilities() {
 
+    @Override
+    public void onFocusChange(View view, boolean b) {
+        if (view.getId() == R.id.message_input) {
+            messageInput.setLines(b ? 3 : 1);
+        }
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.image_mask:
+                //get the image
+                break;
+            case R.id.send_button:
+                //send the message
+                String msg = messageInput.getText().toString();
+                Bitmap img = ((BitmapDrawable) imageSource.getDrawable()).getBitmap();
+                //TODO send for encoding
+                break;
+        }
+    }
 }
