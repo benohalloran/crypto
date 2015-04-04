@@ -12,7 +12,6 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.List;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -20,7 +19,6 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.Cipher;
 
 import io.ohalloran.crypto.it.mobistego.business.LSB2bit;
-import io.ohalloran.crypto.it.mobistego.utils.Constants;
 import io.ohalloran.crypto.it.mobistego.utils.Utility;
 
 
@@ -34,7 +32,7 @@ public class Cryption {
 
     public static String stringToRSA(String message, PublicKey p){
         try {
-            return Base64.encodeToString(RSAEncrypt(message, p),Base64.DEFAULT);
+            return Base64.encodeToString(RSAEncrypt(message, p), Base64.DEFAULT);
         }
         catch (Exception e){
             Log.e("RSA", "Failure in string to RSA", e);
@@ -47,12 +45,6 @@ public class Cryption {
 
         try {
             byte[] encb = Base64.decode(enc,Base64.DEFAULT);
-
-            String encs = "";
-            for(byte b : encb){
-                encs += b + " ";
-            }
-            Log.d("RSAtoStringbyte",encs);
             return RSADecrypt(encb, p);
         }
         catch (Exception e){

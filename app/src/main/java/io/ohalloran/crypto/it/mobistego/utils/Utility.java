@@ -4,7 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.os.Environment;
+import android.util.Base64;
 import android.util.Log;
+import android.widget.ImageView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,11 +14,17 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
+
+import io.ohalloran.crypto.R;
+import io.ohalloran.crypto.coding.Cryption;
 
 
 /**
@@ -44,91 +52,6 @@ public class Utility {
 
     private final static String TAG=Utility.class.getName();
     public static final int SQUARE_BLOCK = 512;
-
-    public static List<Bitmap> splitImage(Bitmap bitmap) {
-
-        //For the number of rows and columns of the grid to be displayed
-
-
-        //For height and width of the small image chunks
-        int chunkHeight, chunkWidth;
-
-        //To store all the small image chunks in bitmap format in this list
-        ArrayList<Bitmap> chunkedImages = new ArrayList<Bitmap>();
-
-
-        int rows = bitmap.getHeight() / SQUARE_BLOCK;
-        int cols = bitmap.getWidth() / SQUARE_BLOCK;
-
-        int chunkH_mod = bitmap.getHeight() % SQUARE_BLOCK;
-        int chunkW_mod = bitmap.getWidth() % SQUARE_BLOCK;
-
-
-        if (chunkH_mod > 0)
-            rows++;
-        if (chunkW_mod > 0)
-            cols++;
-
-
-        //xCoord and yCoord are the pixel positions of the image chunks
-        int yCoord = 0;
-        for (int x = 0; x < rows; x++) {
-            int xCoord = 0;
-            for (int y = 0; y < cols; y++) {
-                chunkHeight = SQUARE_BLOCK;
-                chunkWidth = SQUARE_BLOCK;
-
-                if (y == cols - 1 && chunkW_mod > 0)
-                    chunkWidth = chunkW_mod;
-
-                if (x == rows - 1 && chunkH_mod > 0)
-                    chunkHeight = chunkH_mod;
-
-                chunkedImages.add(Bitmap.createBitmap(bitmap, xCoord, yCoord, chunkWidth, chunkHeight));
-                xCoord += SQUARE_BLOCK;
-            }
-            yCoord += SQUARE_BLOCK;
-        }
-
-
-        return chunkedImages;
-    }
-
-    public static Bitmap mergeImage(List<Bitmap> images, int originalHeight, int originalWidth) {
-
-        int rows = originalHeight / SQUARE_BLOCK;
-        int cols = originalWidth / SQUARE_BLOCK;
-
-        int chunkH_mod = originalHeight % SQUARE_BLOCK;
-        int chunkW_mod = originalWidth % SQUARE_BLOCK;
-
-
-        if (chunkH_mod > 0)
-            rows++;
-        if (chunkW_mod > 0)
-            cols++;
-
-        //create a bitmap of a size which can hold the complete image after merging
-        Log.d(TAG,"Size width "+originalWidth+" size height "+originalHeight);
-        Bitmap bitmap = Bitmap.createBitmap(originalWidth, originalHeight, Bitmap.Config.ARGB_4444);
-
-        Canvas canvas = new Canvas(bitmap);
-        int count = 0;
-        int chunkWidth = SQUARE_BLOCK;
-        int chunkHeight = SQUARE_BLOCK;
-
-        for (int irows = 0; irows < rows; irows++) {
-            for (int icols = 0; icols < cols; icols++) {
-
-                canvas.drawBitmap(images.get(count), (chunkWidth * icols), (chunkHeight * irows), null);
-                count++;
-
-            }
-        }
-
-        return bitmap;
-    }
-
 
     /**
      * Convert the byte array to an int array.
@@ -159,17 +82,6 @@ public class Utility {
      * Convert the byte array to an int.
      *
      * @param b The byte array
-     * @return The integer
-     */
-    public static int byteArrayToInt(byte[] b) {
-        return byteArrayToInt(b, 0);
-    }
-
-    /**
-     * Convert the byte array to an int starting from the given offset.
-     *
-     * @param b      The byte array
-     * @param offset The array offset
      * @return The integer
      */
     public static int byteArrayToInt(byte[] b, int offset) {
@@ -208,34 +120,116 @@ public class Utility {
         }
         return newarray;
     }
+    private void testRSA(String t){
+        PublicKey puk = null;
+        PrivateKey prk = null;
 
-    public static boolean isEmpty(String str)
-    {
-        boolean result=true;
-        if(str==null);
-        else
-        {
-            str=str.trim();
-            if(str.length()>0 && !str.equals("undefined"))
-                result=false;
+        try{
+            KeyPair kp = Cryption.getKeyPair(1024);
+            puk = kp.getPublic();
+            prk = kp.getPrivate();
+            byte [] enc = Cryption.RSAEncrypt(t,puk);
+
+            Log.d("byte enc", Base64.encodeToString(enc, Base64.DEFAULT));
+            String dec = Cryption.RSADecrypt(enc,prk);
+            Log.d("byte dec", dec);
+
+
+
+            String encs = Cryption.stringToRSA(t,puk);
+
+            Log.d("enclength", enc.length + "");
+            Log.d("encslength", encs.length() + "");
+
+            String s = "";
+
+            for(byte b : enc){
+                s +=b + " ";
+            }
+
+            Log.d("encbyte", s);
+
+            s = "";
+
+            for(byte b : encs.getBytes()){
+                s +=b + " ";
+            }
+
+            Log.d("encsbyte", s);
+
+
+            Log.d("String enc",encs);
+
+            String decs = Cryption.RSAtoString(encs,prk);
+
+            Log.d("String dec", decs);
         }
+        catch (Exception e){
+            Log.e("Key Pair Gen", "Error in Key Pair generation",e);
+        }
+    }
+    private void testEncodeDecode(Bitmap image, String message){
+        Bitmap image2 = Cryption.mobiEncode(image,message);
+        Boolean b = image.sameAs(image2);
+        Log.d("encode test", "The images are equal?: " + b);
+        //ImageView pic1 = (ImageView) findViewById(R.id.pic1);
+        //ImageView pic2 = (ImageView) findViewById(R.id.pic2);
 
-        return result;
+        byte[] encodedBytes= message.getBytes();
+
+        byte[] decBytes= Cryption.mobiDecode(image2).getBytes();
+        //pic1.setImageBitmap(image);
+        //pic2.setImageBitmap(image2);
+
+        try{
+            Log.d("EncodedBytes", new String(encodedBytes,"UTF-8"));
+            Log.d("DecodedBytes", new String(decBytes,"UTF-8"));
+            for(int i = 0; i<encodedBytes.length; i++){
+                if(encodedBytes[i] != decBytes[i]){
+                    Log.d("Not equal here", i +"");
+                    //image.getPixels(pixels,);
+                    //Log.d("Pixel Value here", )
+                }
+            }
+        }
+        catch (Exception e){
+            Log.e("testEncodeDecode", "unsupported standard");
+        }
+    }
+
+    private void testAll(Bitmap image, String m){
+        PublicKey puk = null;
+        PrivateKey prk = null;
+
+        try{
+            KeyPair kp = Cryption.getKeyPair(1024);
+            puk = kp.getPublic();
+            prk = kp.getPrivate();
+        }
+        catch (Exception e){
+            Log.e("Key Pair Gen", "Error in Key Pair generation");
+        }
+        String cipher = Cryption.stringToRSA(m,puk);
+
+        Bitmap image2 = Cryption.mobiEncode(image,cipher);
+        Boolean b = image.sameAs(image2);
+        Log.d("encode test", "The images are equal?: " + b);
+        //ImageView pic1 = (ImageView) findViewById(R.id.pic1);
+        //ImageView pic2 = (ImageView) findViewById(R.id.pic2);
+
+        String decodeCipher= Cryption.mobiDecode(image2);
+
+        String decodeMessage = Cryption.RSAtoString(decodeCipher, prk);
+
+        Log.d("Encoded Message", m);
+        Log.d("Decoded Message", decodeMessage);
+
+        //pic1.setImageBitmap(image);
+        //pic2.setImageBitmap(image2);
+
     }
 
 
-    public static boolean isEmpty(Collection<?> collection)
-    {
-        boolean result=true;
-        if (collection == null) {
-            result=true;
-        } else if (collection.isEmpty()) {
-            result=true;
-        } else {
-            result=false;
-        }
-        return result;
-    }
 
 
 }
