@@ -24,8 +24,9 @@ public class ConversationsActivity extends ActionBarActivity {
         setContentView(R.layout.activity_conversations);
         Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.bird2);
         //Log.d("encryption", Cryption.pictureDecode(image));
-        String s = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lectus justo, maximus quis aliquet eu, tincidunt quis nunc. Fusce convallis tempus purus quis luctus. Nam pulvinar enim lectus, ac accumsan risus euismod eget. Fusce eu risus id sapien lacinia dictum eget ut elit. Pellentesque id dui eu diam laoreet tempor. Quisque at ipsum a quam consectetur iaculis. Vestibulum eget venenatis magna. Nulla facilisi. Cras imperdiet vel augue vitae feugiat. Morbi vehicula sollicitudin risus, ut faucibus erat vehicula at.";
-        testEncodeDecode(image,s);
+        String s = "Lot";
+        s = s.trim();
+        testEncodeDecode(image,s.getBytes());
 
 
 
@@ -62,22 +63,53 @@ public class ConversationsActivity extends ActionBarActivity {
             Log.e("Key Pair Gen", "Error in Key Pair generation");
         }
     }
-    private void testEncodeDecode(Bitmap image, String message){
+    private void testEncodeDecode(Bitmap image, byte[] message){
         Bitmap image2 = Cryption.pictureEncode(message,image);
         Boolean b = image.sameAs(image2);
         Log.d("encode test", "The images are equal?: " + b);
         //testBitOpp();
         ImageView pic1 = (ImageView) findViewById(R.id.pic1);
         ImageView pic2 = (ImageView) findViewById(R.id.pic2);
+
+
+        byte[] encodedBytes= message;
+
+        for(byte by : encodedBytes){
+            Log.wtf("waaat",by+"");
+        }
+
+        byte[] decodedBytes= Cryption.pictureDecode(image2);
         pic1.setImageBitmap(image);
         pic2.setImageBitmap(image2);
-
-        byte[] encodedBytes= message.getBytes();
-        byte[] decodedBytes= Cryption.pictureDecode(image2);
-
+        //for(byte by: decodedBytes){
+        //    if(by!=0) {
+                //Log.d("bytes", by + "");
+        //    }
+        //}
+        int j = decodedBytes.length - 1;
+        while(j>=0){
+            if(decodedBytes[j] == 0xFFFFFFFF){
+                break;
+            }
+            j--;
+        }
+        byte[] decBytes = new byte[j];
+        for(int i = 0; i<decBytes.length; i++){
+            decBytes[i] = decodedBytes[i];
+        }
+        for(byte by : decBytes){
+            Log.wtf("waaat",by+"");
+        }
         try{
             Log.d("EncodedBytes", new String(encodedBytes,"UTF-8"));
-            Log.d("DecodedBytes", new String(decodedBytes,"UTF-8"));
+            Log.d("DecodedBytes", new String(decBytes,"UTF-8"));
+            for(int i = 0; i<encodedBytes.length; i++){
+                if(encodedBytes[i] != decBytes[i]){
+                    Log.d("Not equal here", i +"");
+                    //image.getPixels(pixels,);
+                    //Log.d("Pixel Value here", )
+                }
+            }
         }
         catch (Exception e){
             Log.e("testEncodeDecode", "unsupported standard");

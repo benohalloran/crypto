@@ -63,56 +63,81 @@ public class Cryption {
         map.compress(Bitmap.CompressFormat.PNG, 100, stream);
 
         int pixels[] =new int[map.getHeight() * map.getWidth()];
+
+        for(int i = 0; i<pixels.length; i++){
+            pixels[i] = 0;
+        }
+
         map.getPixels(pixels,0,map.getWidth(),0,0,map.getWidth(),map.getHeight());
         byte[] by = new byte[map.getWidth() * map.getHeight()];
+
+        for(int i = 0; i<by.length; i++){
+            by[i] = 0;
+        }
 
         int i =0;
         for(int pixel:pixels){
             //Log.d("pixels",pixel + "");
-            int top =       ((pixel&0x03000000)>>6*4)<<6;
-            int midtop =    ((pixel&0x00030000)>>4*4)<<4;
-            int midbot =    ((pixel&0x00000300)>>2*4)<<2;
+            int top =       ((pixel&0x03000000)>>>6*4);
+            int midtop =    ((pixel&0x00030000)>>>4*4);
+            int midbot =    ((pixel&0x00000300)>>>2*4);
             int bot =       ((pixel&0x00000003));
             //Log.d("bytes",(byte) (top + midtop + midbot + bot) + "");
-            by[i] = (byte) ( bot+ midbot+ midtop+top);
-
+            by[i] = (byte) ((top<<6) + (midtop<<4) + (midbot<<2) + bot);
+            if(i<5) {
+                Log.wtf("top", top + "");
+                Log.wtf("midtop", midtop + "");
+                Log.wtf("midbot", midbot + "");
+                Log.wtf("bot", bot + "");
+                Log.wtf("Decode", by[i] + "");
+            }
             i++;
         }
 
         return by;
     }
     //does not work yet
-    public static Bitmap pictureEncode(String msg, Bitmap map) {
+    public static Bitmap pictureEncode(byte[] bytes, Bitmap map) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         map.compress(Bitmap.CompressFormat.PNG, 100, stream);
 
         int pixels[] =new int[map.getHeight() * map.getWidth()];
         map.getPixels(pixels,0,map.getWidth(),0,0,map.getWidth(),map.getHeight());
 
-        int bitmask = 0xFCFCFCFC;
+        int bitmask =0xFCFCFCFC;
 
         //Log.wtf("THINGS", (bitmask == ~3) + "");
         for(int i = 0; i < pixels.length; i++){
             pixels[i] = pixels[i] & bitmask;
         }
 
-        byte bmsg[] = msg.getBytes();
+        byte bmsg[] = bytes;
         int i = 0;
         for(byte by :bmsg){
+
             int top = (by&0xC0)>>6;
             int midtop = (by&0x30)>>4;
             int midbot = (by&0x0C)>>2;
             int bot = by&0x03;
-            pixels[i] = pixels[i] ^ (top <<(6*4));
-            pixels[i] = pixels[i] ^ (midtop <<(4*4));
-            pixels[i] = pixels[i] ^ (midbot <<(2*4));
-            pixels[i] = pixels[i] ^ bot;
+
+            Log.wtf("top",top+"");
+            Log.wtf("midtop",midtop+"");
+            Log.wtf("midbot",midbot+"");
+            Log.wtf("bot",bot+"");
+            Log.wtf("encode",by+"");
+
+
+            pixels[i] = pixels[i] | (top <<(6*4));
+            pixels[i] = pixels[i] | (midtop <<(4*4));
+            pixels[i] = pixels[i] | (midbot <<(2*4));
+            pixels[i] = pixels[i] | bot;
             i++;
         }
         pixels[i] = pixels[i] | (0x03 <<(6*4));
         pixels[i] = pixels[i] | (0x03 <<(4*4));
         pixels[i] = pixels[i] | (0x03 <<(2*4));
         pixels[i] = pixels[i] | 0x03;
+
 
         return Bitmap.createBitmap(pixels,0,map.getWidth(),map.getWidth(),map.getHeight(), Bitmap.Config.ARGB_8888);
 
