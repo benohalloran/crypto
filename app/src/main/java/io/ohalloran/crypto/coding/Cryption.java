@@ -18,12 +18,16 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.Cipher;
 
 import io.ohalloran.crypto.it.mobistego.business.LSB2bit;
+import io.ohalloran.crypto.it.mobistego.utils.Constants;
 import io.ohalloran.crypto.it.mobistego.utils.Utility;
 
 
 /**
  * Created by Ben on 4/3/2015.
  */
+
+
+
 public class Cryption {
 
     public static String stringToRSA(String message, PublicKey p){
@@ -38,7 +42,7 @@ public class Cryption {
 
     public static String RSAtoString(String enc, PrivateKey p){
         try {
-            return RSADecrypt(enc.getBytes(), p);
+            return RSADecrypt(enc.getBytes("UTF-8"), p);
         }
         catch (Exception e){
             Log.e("RSA", "Failure in string to RSA", e);
@@ -83,11 +87,13 @@ public class Cryption {
             //Log.d("Not good", "No message detected");
         //}
 
-        return decoded;
+        return decoded.substring(3);
     }
 
     public static Bitmap mobiEncode(Bitmap bitm, String str){
         {
+            //str += END_MESSAGE_COSTANT;
+            //str = START_MESSAGE_COSTANT + str;
             int width = bitm.getWidth();
             int height = bitm.getHeight();
 
@@ -114,7 +120,3 @@ public class Cryption {
         }
     }
 }
-//FFBF917A  before mask
-//FCBC9078  after mask
-//FDBF907A  after encode
-//FDC0907A  before decode

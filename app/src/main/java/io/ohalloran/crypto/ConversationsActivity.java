@@ -17,17 +17,17 @@ import io.ohalloran.crypto.coding.Cryption;
 
 //single conversation
 public class ConversationsActivity extends ActionBarActivity {
-
+    public static String END_MESSAGE_COSTANT = "#!@";
+    public static String START_MESSAGE_COSTANT = "@!#";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversations);
         Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.bird2);
         //Log.d("encryption", Cryption.pictureDecode(image));
-        String s = "alkheuafuakecbkaecueahdaskjxclasmciwqlnalcnelufvkealjfnkdbkanc eakdnuawednawbdkaebfulaebndfkaew a  dkuhawkduhjaweldfnaelkfhlafd ad adhfwajdaebfmae dawdlawndkwakdlaenfa efaef adbnlawndkaenf,aenflawbdlwadliaenfkbealfnawd  kdfnawdlaenfkaebf   alkdnawkdbawkldf73igr8273y51947198rgqifqkbfn";
-        s = s.trim();
-
-        testEncodeDecode(image,s);
+        String s = "alkheuafuake";
+        //testEncodeDecode(image,s);
+        testAll(image,s);
 
 
 
@@ -65,15 +65,7 @@ public class ConversationsActivity extends ActionBarActivity {
         byte[] decBytes= Cryption.mobiDecode(image2).getBytes();
         pic1.setImageBitmap(image);
         pic2.setImageBitmap(image2);
-        //for(byte by: decodedBytes){
-        //    if(by!=0) {
-                //Log.d("bytes", by + "");
-        //    }
-        //}
 
-        //for(byte by : decBytes){
-            //Log.wtf("waaat",by+"");
-        //}
         try{
             Log.d("EncodedBytes", new String(encodedBytes,"UTF-8"));
             Log.d("DecodedBytes", new String(decBytes,"UTF-8"));
@@ -88,19 +80,9 @@ public class ConversationsActivity extends ActionBarActivity {
         catch (Exception e){
             Log.e("testEncodeDecode", "unsupported standard");
         }
-
-
-        /*for(int i=0; i<encodedBytes.length;i++){
-            Log.d("EncodedBytes",encodedBytes[i] + "");
-        }
-        for(int i=0; i<decodedBytes.length;i++){
-            Log.d("DecodedBytes",decodedBytes[i] + "");
-        }*/
-
     }
 
-    private void testAll(String message){
-        String t = "this is a test";
+    private void testAll(Bitmap image, String m){
         PublicKey puk = null;
         PrivateKey prk = null;
 
@@ -112,7 +94,44 @@ public class ConversationsActivity extends ActionBarActivity {
         catch (Exception e){
             Log.e("Key Pair Gen", "Error in Key Pair generation");
         }
+        String message = Cryption.stringToRSA(m,puk);
 
+        Bitmap image2 = Cryption.mobiEncode(image,message);
+        Boolean b = image.sameAs(image2);
+        Log.d("encode test", "The images are equal?: " + b);
+        ImageView pic1 = (ImageView) findViewById(R.id.pic1);
+        ImageView pic2 = (ImageView) findViewById(R.id.pic2);
+
+        byte[] encodedBytes= message.getBytes();
+
+        byte[] decBytes= Cryption.mobiDecode(image2).getBytes();
+
+
+
+        pic1.setImageBitmap(image);
+        pic2.setImageBitmap(image2);
+
+        try{
+            String encString = new String(decBytes,"UTF-8");
+
+            String decString = Cryption.RSAtoString(encString,prk);
+
+            Log.d("EncodedString", m);
+            Log.d("RSAinputString", message);
+            Log.d("hashedRSAinputString", START_MESSAGE_COSTANT + message + END_MESSAGE_COSTANT);
+            Log.d("RSAoutputString", encString);
+            Log.d("DecodedString", decString);
+            for(int i = 0; i<encodedBytes.length; i++){
+                if(encodedBytes[i] != decBytes[i]){
+                    Log.d("Not equal here", i +"");
+                    //image.getPixels(pixels,);
+                    //Log.d("Pixel Value here", )
+                }
+            }
+        }
+        catch (Exception e){
+            Log.e("testEncodeDecode", "unsupported standard");
+        }
     }
 
 
