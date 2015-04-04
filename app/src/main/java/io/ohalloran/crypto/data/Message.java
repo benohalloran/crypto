@@ -6,7 +6,9 @@ package io.ohalloran.crypto.data;
 
 import com.orm.SugarRecord;
 
+import java.lang.String;
 import java.util.Arrays;
+import java.lang.*;
 
 public class Message extends SugarRecord<Message> {
 
@@ -14,6 +16,7 @@ public class Message extends SugarRecord<Message> {
     public byte[] imageData;
     public String sender;
     public String recip;
+    public String date;
 
     public Message() {
     }
@@ -22,6 +25,7 @@ public class Message extends SugarRecord<Message> {
         this.messageText = message;
         this.sender = send;
         this.recip = recip;
+        date = makeDate();
     }
 
     @Override
@@ -48,4 +52,10 @@ public class Message extends SugarRecord<Message> {
         result = 31 * result + recip.hashCode();
         return result;
     }
+
+    public String makeDate(){
+        DateTime time = new DateTime(2015, (Math.random()*100)%12, (Math.random()*100)%30, (Math.random()*100)%60, (Math.random()*100)%60, (Math.random()*100)%60);
+        return "" + time.monthOfYear().getAsText()+ "/" + time.dayOfMonth().getAsText() + "/" + time.Year().getAsText() + " " + time.hourOfDay().getAsText() + ":" + time.minuteOfHour().getAsText() + "." + time.secondOfMinitue().getAsText();
+    }
+
 }
