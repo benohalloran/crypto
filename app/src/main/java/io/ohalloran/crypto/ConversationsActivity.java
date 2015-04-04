@@ -14,6 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import io.ohalloran.crypto.coding.Cryption;
+import io.ohalloran.crypto.coding.LS2B;
 
 //single conversation
 public class ConversationsActivity extends ActionBarActivity {
@@ -24,9 +25,9 @@ public class ConversationsActivity extends ActionBarActivity {
         setContentView(R.layout.activity_conversations);
         Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.bird2);
         //Log.d("encryption", Cryption.pictureDecode(image));
-        String s = "Lot";
+        String s = "Lotjckhalcfhaekufcja akuhflkawhkuanf bdwudfnakufhbur,gjlregjwfnqoe";
         s = s.trim();
-        testEncodeDecode(image,s.getBytes());
+        testEncodeDecode(image,s);
 
 
 
@@ -63,8 +64,17 @@ public class ConversationsActivity extends ActionBarActivity {
             Log.e("Key Pair Gen", "Error in Key Pair generation");
         }
     }
-    private void testEncodeDecode(Bitmap image, byte[] message){
-        Bitmap image2 = Cryption.pictureEncode(message,image);
+    private void testEncodeDecode(Bitmap image, String s){
+        //Bitmap image2 = Cryption.pictureEncode(message,image);
+
+        int pixels[] =new int[image.getHeight() * image.getWidth()];
+        image.getPixels(pixels,0,image.getWidth(),0,0,image.getWidth(),image.getHeight());
+
+        byte[] b2 = LS2B.codingWith2Bit(pixels, image.getWidth(), image.getHeight(), s);
+
+
+        Bitmap image2 = BitmapFactory.decodeByteArray(b2, 0, b2.length);
+
         Boolean b = image.sameAs(image2);
         Log.d("encode test", "The images are equal?: " + b);
         //testBitOpp();
@@ -72,13 +82,14 @@ public class ConversationsActivity extends ActionBarActivity {
         ImageView pic2 = (ImageView) findViewById(R.id.pic2);
 
 
-        byte[] encodedBytes= message;
+        byte[] encodedBytes= s.getBytes();
 
         for(byte by : encodedBytes){
             Log.wtf("waaat",by+"");
         }
 
-        byte[] decodedBytes= Cryption.pictureDecode(image2);
+        //byte[] decodedBytes= Cryption.pictureDecode(image2);
+        String t = LS2B.reconvertToThreeDimInsomma(b2,image.getWidth(),image.getHeight(),false);
         pic1.setImageBitmap(image);
         pic2.setImageBitmap(image2);
         //for(byte by: decodedBytes){
@@ -86,30 +97,30 @@ public class ConversationsActivity extends ActionBarActivity {
                 //Log.d("bytes", by + "");
         //    }
         //}
-        int j = decodedBytes.length - 1;
-        while(j>=0){
-            if(decodedBytes[j] == 0xFFFFFFFF){
-                break;
-            }
-            j--;
-        }
-        byte[] decBytes = new byte[j];
-        for(int i = 0; i<decBytes.length; i++){
-            decBytes[i] = decodedBytes[i];
-        }
-        for(byte by : decBytes){
-            Log.wtf("waaat",by+"");
-        }
+        //int j = decodedBytes.length - 1;
+        //while(j>=0){
+        //    if(decodedBytes[j] == 0xFFFFFFFF){
+        //        break;
+         //   }
+         //   j--;
+        //}
+        //byte[] decBytes = new byte[j];
+        //for(int i = 0; i<decBytes.length; i++){
+        //    decBytes[i] = decodedBytes[i];
+        //}
+        //for(byte by : decBytes){
+        //    Log.wtf("waaat",by+"");
+        //}
         try{
-            Log.d("EncodedBytes", new String(encodedBytes,"UTF-8"));
-            Log.d("DecodedBytes", new String(decBytes,"UTF-8"));
-            for(int i = 0; i<encodedBytes.length; i++){
-                if(encodedBytes[i] != decBytes[i]){
-                    Log.d("Not equal here", i +"");
+            Log.d("EncodedBytes", s);
+            Log.d("DecodedBytes", t);
+            //for(int i = 0; i<encodedBytes.length; i++){
+            //    if(encodedBytes[i] != decBytes[i]){
+            //        Log.d("Not equal here", i +"");
                     //image.getPixels(pixels,);
                     //Log.d("Pixel Value here", )
-                }
-            }
+                //}
+            //}
         }
         catch (Exception e){
             Log.e("testEncodeDecode", "unsupported standard");
