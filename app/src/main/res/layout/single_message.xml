@@ -13,13 +13,13 @@
         android:layout_width="@dimen/image_size"
         android:layout_height="@dimen/image_size"
         android:id="@+id/message_image"
-        android:layout_gravity="left"
+        android:layout_gravity="right"
         android:src="@mipmap/ic_launcher" />
 
     <TextView
         android:layout_width="@dimen/image_size"
         android:layout_height="wrap_content"
         android:text="New Text"
-        android:layout_gravity="left"
+        android:layout_gravity="right"
         android:id="@+id/message_text" />
 </LinearLayout>

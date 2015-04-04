@@ -47,7 +47,23 @@ public class ConversationsActivity extends ActionBarActivity {
 
                 Person data = getItem(i);
                 name.setText(data.name);
+
+                contactBadge.setImageResource(getImgResource(data));
                 return root;
+            }
+
+            int getImgResource(Person who) {
+                switch (who.name) {
+                    case "Spongebob":
+                        return R.drawable.spongebob;
+                    case "Mr. Krabs":
+                        return R.drawable.mr_krabs;
+                    case "Sandy":
+                        return R.drawable.sandy;
+                    case "Squidward":
+                        return R.drawable.squidward;
+                }
+                return -1;
             }
         };
         listView.setAdapter(adapter);
