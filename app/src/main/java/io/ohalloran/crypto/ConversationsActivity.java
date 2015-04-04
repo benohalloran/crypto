@@ -24,24 +24,14 @@ public class ConversationsActivity extends ActionBarActivity {
         setContentView(R.layout.activity_conversations);
         Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.bird2);
         //Log.d("encryption", Cryption.pictureDecode(image));
-        String s = "rt";
+        String s = "alkheuafuakecbkaecueahdaskjxclasmciwqlnalcnelufvkealjfnkdbkanc eakdnuawednawbdkaebfulaebndfkaew a  dkuhawkduhjaweldfnaelkfhlafd ad adhfwajdaebfmae dawdlawndkwakdlaenfa efaef adbnlawndkaenf,aenflawbdlwadliaenfkbealfnawd  kdfnawdlaenfkaebf   alkdnawkdbawkldf73igr8273y51947198rgqifqkbfn";
         s = s.trim();
+
         testEncodeDecode(image,s);
 
 
 
 
-    }
-    private void testBitOpp(){
-        String s = "abc";
-        byte b[] = s.getBytes();
-        Boolean a[] =Cryption.getBitArray(b);
-        for(Boolean bit: a){
-            Log.d("byte",bit + "");
-        }
-        for(byte by: b){
-            Log.d("byte",by +"");
-        }
     }
     private void testRSA(){
         String t = "this is a test";
@@ -64,23 +54,13 @@ public class ConversationsActivity extends ActionBarActivity {
         }
     }
     private void testEncodeDecode(Bitmap image, String message){
-        image.setHasAlpha(true);
-        //image.setConfig(Bitmap.Config.ARGB_8888);
         Bitmap image2 = Cryption.mobiEncode(image,message);
-        image2.setHasAlpha(true);
-        //byte[] b2 = Cryption.encodeBytePicture(image.)
         Boolean b = image.sameAs(image2);
         Log.d("encode test", "The images are equal?: " + b);
-        //testBitOpp();
         ImageView pic1 = (ImageView) findViewById(R.id.pic1);
         ImageView pic2 = (ImageView) findViewById(R.id.pic2);
 
-
         byte[] encodedBytes= message.getBytes();
-
-        for(byte by : encodedBytes){
-            Log.wtf("waaat",by+"");
-        }
 
         byte[] decBytes= Cryption.mobiDecode(image2).getBytes();
         pic1.setImageBitmap(image);
@@ -116,6 +96,22 @@ public class ConversationsActivity extends ActionBarActivity {
         for(int i=0; i<decodedBytes.length;i++){
             Log.d("DecodedBytes",decodedBytes[i] + "");
         }*/
+
+    }
+
+    private void testAll(String message){
+        String t = "this is a test";
+        PublicKey puk = null;
+        PrivateKey prk = null;
+
+        try{
+            KeyPair kp = Cryption.getKeyPair(1024);
+            puk = kp.getPublic();
+            prk = kp.getPrivate();
+        }
+        catch (Exception e){
+            Log.e("Key Pair Gen", "Error in Key Pair generation");
+        }
 
     }
 
