@@ -1,12 +1,15 @@
 package io.ohalloran.crypto;
 
+import android.app.AlertDialog;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -79,6 +82,22 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
             }
         };
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                final Message data = (Message) listView.getAdapter().getItem(i);
+                View popup = getLayoutInflater().inflate(R.layout.message_reveal, null, false);
+                AlertDialog.Builder builder = new AlertDialog.Builder(MessagesActivity.this)
+                        .setView(popup).setCancelable(true);
+                ((TextView) popup.findViewById(R.id.decrypted_msg)).setText(data.messageText);
+                ((ImageView) popup.findViewById(R.id.source_image))
+                        .setImageBitmap(BitmapFactory.decodeByteArray(data.imageData, 0,
+                                data.imageData.length, new BitmapFactory.Options()));
+                builder.show();
+
+            }
+        });
         setTitle(recep.name);
     }
 
