@@ -58,24 +58,31 @@ public class Cryption {
         return decrypted;
     }
 
-    public static String pictureDecode(Bitmap map) {
+    public static byte[] pictureDecode(Bitmap map) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         map.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-       // for(byte b: byteArray){
-            //Log.d("imageMap",b+"");
-        //}
+
         int pixels[] =new int[map.getHeight() * map.getWidth()];
-        for(int i = 0; i<pixels.length; i++){
-            pixels[i] = 0;
-        }
         map.getPixels(pixels,0,map.getWidth(),0,0,map.getWidth(),map.getHeight());
-        for(int i : pixels){
-            Log.d("pixelMap", "Blue:  " +Color.blue(i)+"  Red:  " + Color.red(i)+ "  Green:  " + Color.green(i));
+
+        //
+
+
+        byte[] by = new byte[map.getWidth() * map.getHeight()];
+
+
+        int i =0;
+        for(int pixel:pixels){
+            int top =       ((pixel&0x03000000)>>6*4)<<6;
+            int midtop =    ((pixel&0x00030000)>>4*4)<<4;
+            int midbot =    ((pixel&0x00000300)>>2*4)<<2;
+            int bot =       ((pixel&0x00000003));
+            by[i] = (byte) (top + midtop + midbot + bot);
+
+            i++;
         }
 
-
-        return map.getPixel(0,1) + "";
+        return by;
     }
     //does not work yet
     public static Bitmap pictureEncode(String msg, Bitmap map) {
@@ -85,14 +92,45 @@ public class Cryption {
         int pixels[] =new int[map.getHeight() * map.getWidth()];
         map.getPixels(pixels,0,map.getWidth(),0,0,map.getWidth(),map.getHeight());
 
-        int bitmask = 0xFFFFFFFE;
+        int bitmask = 0xFCFCFCFC;
 
+        //Log.wtf("THINGS", (bitmask == ~3) + "");
         for(int i = 0; i < pixels.length; i++){
             pixels[i] = pixels[i] & bitmask;
         }
 
         byte bmsg[] = msg.getBytes();
+        int i = 0;
+        for(byte by :bmsg){
+            int top = by&0xC0;
+            int midtop = by&0x30;
+            int midbot = by&0x0C;
+            int bot = by&0x03;
+            pixels[i] = pixels[i] | (top <<(6*4));
+            pixels[i] = pixels[i] | (midtop <<(4*4));
+            pixels[i] = pixels[i] | (midbot <<(2*4));
+            pixels[i] = pixels[i] | bot;
 
+            i++;
+        }
+        pixels[i] = pixels[i] | (0xC0 <<(6*4));
+        pixels[i] = pixels[i] | (0x40 <<(4*4));
+        pixels[i] = pixels[i] | (0x0C <<(2*4));
+        pixels[i] = pixels[i] | 0x04;
+       // for(int i = 0; i<bmsg.length; i++){
+       //     int offset = (i%2)*8;
+        //    pixels[i]
+        //}
+
+        /*Boolean bitmsg[] = getBitArray(bmsg);
+        int i = 0;
+        int j = 0;
+        int k = 0;
+        for(Boolean bit : bitmsg){
+
+            i = (i + 1)%4;
+
+        }*/
 
 
         return Bitmap.createBitmap(pixels,0,map.getWidth(),map.getWidth(),map.getHeight(), Bitmap.Config.ARGB_8888);
@@ -103,7 +141,7 @@ public class Cryption {
         Boolean bitmsg[] = new Boolean[bmsg.length*8];
         int j = 0;
         for(byte b:bmsg){
-            for(int i = 0; i<=7; i++){
+            for(int i = 7; i>=0; i--){
                 int bm = (0x00000001 << i) & b;
                 bitmsg[j] = bm!=0;
                 j++;

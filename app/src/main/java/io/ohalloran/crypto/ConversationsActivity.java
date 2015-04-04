@@ -5,6 +5,8 @@ import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
+
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
@@ -22,11 +24,23 @@ public class ConversationsActivity extends ActionBarActivity {
         setContentView(R.layout.activity_conversations);
         Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.bird2);
         //Log.d("encryption", Cryption.pictureDecode(image));
-        Bitmap image2 = Cryption.pictureEncode("",image);
-        Boolean b = image.sameAs(image2);
-        Log.d("encode test", "The images are equal?: " + b);
+        String s = "jacob";
+        testEncodeDecode(image,s);
 
 
+
+
+    }
+    private void testBitOpp(){
+        String s = "abc";
+        byte b[] = s.getBytes();
+        Boolean a[] =Cryption.getBitArray(b);
+        for(Boolean bit: a){
+            Log.d("byte",bit + "");
+        }
+        for(byte by: b){
+            Log.d("byte",by +"");
+        }
     }
     private void testRSA(){
         String t = "this is a test";
@@ -47,6 +61,27 @@ public class ConversationsActivity extends ActionBarActivity {
         catch (Exception e){
             Log.e("Key Pair Gen", "Error in Key Pair generation");
         }
+    }
+    private void testEncodeDecode(Bitmap image, String message){
+        Bitmap image2 = Cryption.pictureEncode(message,image);
+        Boolean b = image.sameAs(image2);
+        Log.d("encode test", "The images are equal?: " + b);
+        //testBitOpp();
+        ImageView pic1 = (ImageView) findViewById(R.id.pic1);
+        ImageView pic2 = (ImageView) findViewById(R.id.pic2);
+        pic1.setImageBitmap(image);
+        pic2.setImageBitmap(image2);
+
+        byte[] encodedBytes= message.getBytes();
+        byte[] decodedBytes= Cryption.pictureDecode(image2);
+
+        for(int i=0; i<encodedBytes.length;i++){
+            Log.d("EncodedBytes",encodedBytes[i] + "");
+        }
+        for(int i=0; i<decodedBytes.length;i++){
+            Log.d("DecodedBytes",decodedBytes[i] + "");
+        }
+
     }
 
 
