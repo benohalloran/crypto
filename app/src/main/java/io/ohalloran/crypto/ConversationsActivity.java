@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -44,7 +45,7 @@ public class ConversationsActivity extends ActionBarActivity {
             prk = kp.getPrivate();
             byte [] enc = Cryption.RSAEncrypt(t,puk);
 
-            Log.d("byte enc", new String(enc,"UTF-8"));
+            Log.d("byte enc", Base64.encodeToString(enc, Base64.DEFAULT));
             String dec = Cryption.RSADecrypt(enc,prk);
             Log.d("byte dec", dec);
 
@@ -53,7 +54,7 @@ public class ConversationsActivity extends ActionBarActivity {
             String encs = Cryption.stringToRSA(t,puk);
 
             Log.d("enclength", enc.length + "");
-            Log.d("encslength", encs.getBytes().length + "");
+            Log.d("encslength", encs.length() + "");
 
             String s = "";
 
@@ -74,7 +75,7 @@ public class ConversationsActivity extends ActionBarActivity {
 
             Log.d("String enc",encs);
 
-            String decs = Cryption.RSADecrypt(encs.getBytes(),prk);
+            String decs = Cryption.RSAtoString(encs,prk);
 
             Log.d("String dec", decs);
         }
@@ -123,28 +124,17 @@ public class ConversationsActivity extends ActionBarActivity {
         catch (Exception e){
             Log.e("Key Pair Gen", "Error in Key Pair generation");
         }
-        String message = Cryption.stringToRSA(m,puk);
+        String cipher = Cryption.stringToRSA(m,puk);
 
-        Log.d("SanityDecode", Cryption.RSAtoString(message,prk));
-
-        Bitmap image2 = Cryption.mobiEncode(image,message);
+        Bitmap image2 = Cryption.mobiEncode(image,cipher);
         Boolean b = image.sameAs(image2);
         Log.d("encode test", "The images are equal?: " + b);
         ImageView pic1 = (ImageView) findViewById(R.id.pic1);
         ImageView pic2 = (ImageView) findViewById(R.id.pic2);
-        byte[] encodedBytes = {};
-        byte[] decBytes = {};
 
-        try{
-            encodedBytes  = message.getBytes("UTF-8");
-            decBytes= Cryption.mobiDecode(image2).getBytes("UTF-8");
-        }
-        catch (Exception e){
-            Log.e("bytes", "error", e);
-        }
+        String decodeCipher= Cryption.mobiDecode(image2);
 
-
-
+        String decodedmessage = Cryption.RSAtoString(decodeCipher, prk);
 
         pic1.setImageBitmap(image);
         pic2.setImageBitmap(image2);
@@ -157,20 +147,12 @@ public class ConversationsActivity extends ActionBarActivity {
             String in = "";
             String out = "";
 
-            for(byte by: message.getBytes("UTF-8")){
-
-                in+=by + " ";
-            }
-            for(byte by: encString.getBytes("UTF-8")){
-                out+=by + " ";
-            }
             Log.d("RSAbytein", in);
             Log.d("RSAbyteout", out);
 
             Log.d("EncodedString", m);
-            Log.d("RSAinputString", message);
-            Log.d("hashedRSAinputString", START_MESSAGE_COSTANT + message + END_MESSAGE_COSTANT);
-            Log.d("RSAoutputString", encString);;
+            Log.d("RSAinputString", cipher);
+            Log.d("RSAoutputString", encString);
             Log.d("DecodedString", decString);
 
             for(int i = 0; i<encodedBytes.length; i++){

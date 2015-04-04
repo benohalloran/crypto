@@ -2,8 +2,10 @@ package io.ohalloran.crypto.coding;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.util.Base64;
 import android.util.Log;
 
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -32,7 +34,7 @@ public class Cryption {
 
     public static String stringToRSA(String message, PublicKey p){
         try {
-            return new String(RSAEncrypt(message, p), "UTF-8");
+            return Base64.encodeToString(RSAEncrypt(message, p),Base64.DEFAULT);
         }
         catch (Exception e){
             Log.e("RSA", "Failure in string to RSA", e);
@@ -44,7 +46,7 @@ public class Cryption {
 
 
         try {
-            byte[] encb = enc.getBytes();
+            byte[] encb = Base64.decode(enc,Base64.DEFAULT);
 
             String encs = "";
             for(byte b : encb){
@@ -76,12 +78,12 @@ public class Cryption {
     }
 
     public static String RSADecrypt(final byte[] encryptedBytes, PrivateKey p) throws NoSuchAlgorithmException, NoSuchPaddingException,
-            InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+            InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException {
 
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.DECRYPT_MODE, p);
         byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
-        String decrypted = new String(decryptedBytes);
+        String decrypted = new String(decryptedBytes,"UTF-8");
         return decrypted;
     }
 
