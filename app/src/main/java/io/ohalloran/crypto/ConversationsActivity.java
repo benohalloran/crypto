@@ -24,9 +24,9 @@ public class ConversationsActivity extends ActionBarActivity {
         setContentView(R.layout.activity_conversations);
         Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.bird2);
         //Log.d("encryption", Cryption.pictureDecode(image));
-        String s = "Lot";
+        String s = "rt";
         s = s.trim();
-        testEncodeDecode(image,s.getBytes());
+        testEncodeDecode(image,s);
 
 
 
@@ -63,8 +63,12 @@ public class ConversationsActivity extends ActionBarActivity {
             Log.e("Key Pair Gen", "Error in Key Pair generation");
         }
     }
-    private void testEncodeDecode(Bitmap image, byte[] message){
-        Bitmap image2 = Cryption.pictureEncode(message,image);
+    private void testEncodeDecode(Bitmap image, String message){
+        image.setHasAlpha(true);
+        //image.setConfig(Bitmap.Config.ARGB_8888);
+        Bitmap image2 = Cryption.mobiEncode(image,message);
+        image2.setHasAlpha(true);
+        //byte[] b2 = Cryption.encodeBytePicture(image.)
         Boolean b = image.sameAs(image2);
         Log.d("encode test", "The images are equal?: " + b);
         //testBitOpp();
@@ -72,13 +76,13 @@ public class ConversationsActivity extends ActionBarActivity {
         ImageView pic2 = (ImageView) findViewById(R.id.pic2);
 
 
-        byte[] encodedBytes= message;
+        byte[] encodedBytes= message.getBytes();
 
         for(byte by : encodedBytes){
             Log.wtf("waaat",by+"");
         }
 
-        byte[] decodedBytes= Cryption.pictureDecode(image2);
+        byte[] decodedBytes= Cryption.mobiDecode(image2).getBytes();
         pic1.setImageBitmap(image);
         pic2.setImageBitmap(image2);
         //for(byte by: decodedBytes){
@@ -97,9 +101,9 @@ public class ConversationsActivity extends ActionBarActivity {
         for(int i = 0; i<decBytes.length; i++){
             decBytes[i] = decodedBytes[i];
         }
-        for(byte by : decBytes){
-            Log.wtf("waaat",by+"");
-        }
+        //for(byte by : decBytes){
+            //Log.wtf("waaat",by+"");
+        //}
         try{
             Log.d("EncodedBytes", new String(encodedBytes,"UTF-8"));
             Log.d("DecodedBytes", new String(decBytes,"UTF-8"));
