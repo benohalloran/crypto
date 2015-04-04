@@ -1,6 +1,7 @@
 package io.ohalloran.crypto;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -12,8 +13,10 @@ import android.widget.ListView;
 import android.widget.QuickContactBadge;
 import android.widget.TextView;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
+import io.ohalloran.crypto.data.Message;
 import io.ohalloran.crypto.data.Person;
 import io.ohalloran.crypto.utils.ListAdapter;
 
@@ -31,9 +34,9 @@ public class ConversationsActivity extends ActionBarActivity {
         listView = (ListView) findViewById(android.R.id.list);
         emptyText = (TextView) findViewById(android.R.id.text1);
 
+        firstTimeConfig();
 
-        listView.setAdapter(adapter = new ListAdapter<Person>(Person.newPerson("Spongebob"),
-                Person.newPerson("Sandy"), Person.newPerson("Mr. Krabs")) {
+        adapter = new ListAdapter<Person>(Person.listAll(Person.class)) {
             @Override
             public View getView(int i, View view, ViewGroup viewGroup) {
                 View root = view != null ? view :
@@ -41,28 +44,51 @@ public class ConversationsActivity extends ActionBarActivity {
 
                 QuickContactBadge contactBadge = (QuickContactBadge) root.findViewById(R.id.avatar);
                 TextView name = (TextView) root.findViewById(R.id.header_name);
-                TextView preview = (TextView) root.findViewById(R.id.header_preview);
 
                 Person data = getItem(i);
                 name.setText(data.name);
                 return root;
             }
-        });
+        };
+        listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Person data = adapter.getItem(i);
                 Intent intent = new Intent(ConversationsActivity.this, MessagesActivity.class);
-                intent.putExtra(MessagesActivity.PERSON_ID, data.personID);
+                intent.putExtra(MessagesActivity.PERSON_ID, (long) data.getId());
                 startActivity(intent);
             }
         });
+    }
 
-        for (Person p : Person.people())
-            for (int i = 0; i < 10; i++)
-                p.newMessage(i++ + " " + p.name,
-                        Person.ME, new Date(System.currentTimeMillis() - 10000 * i), i % 2 == 0);
+    private void firstTimeConfig() {
+        boolean mboolean = false;
+
+        SharedPreferences settings = getSharedPreferences("PREFS_NAME", 0);
+        mboolean = settings.getBoolean("FIRST_RUN", false);
+        if (!mboolean) {
+            // do the thing for the first time
+            settings = getSharedPreferences("PREFS_NAME", 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean("FIRST_RUN", true);
+            editor.commit();
+
+            List<Person> list = new ArrayList<>();
+            for (String s : new String[]{"Spongebob", "Mr. Krabs", "Sandy", "Squidward"}) {
+                Person p = new Person(s);
+                list.add(p);
+                p.save();
+            }
+            for (int i = 0; i < 100; i++) {
+                Message mes = new Message(i + "", list.get(i % list.size()).name,
+                        list.get((int) (Math.random() * list.size())).name);
+                mes.save();
+            }
+
+        }
+
     }
 
     @Override
@@ -75,7 +101,7 @@ public class ConversationsActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.new_thread:
-                startActivity(new Intent(this, MessagesActivity.class));
+                //TODO new message???
                 return true;
         }
         return false;

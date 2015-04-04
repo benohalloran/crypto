@@ -15,6 +15,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.orm.query.Condition;
+import com.orm.query.Select;
+
+import java.util.List;
+
 import io.ohalloran.crypto.data.Message;
 import io.ohalloran.crypto.data.Person;
 import io.ohalloran.crypto.utils.ListAdapter;
@@ -29,15 +34,13 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
     Button sendButton;
 
     ListAdapter<Message> adapter;
-    Person data;
+    Person recep;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages);
         listView = (ListView) findViewById(android.R.id.list);
-        listView.setAdapter(adapter);
-
         messageInput = (EditText) findViewById(R.id.message_input);
         imageSource = (ImageButton) findViewById(R.id.image_mask);
         sendButton = (Button) findViewById(R.id.send_button);
@@ -46,12 +49,13 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
         imageSource.setOnClickListener(this);
         sendButton.setOnClickListener(this);
 
-        int personId = getIntent().getExtras().getInt(PERSON_ID, 0);
+        long personId = getIntent().getExtras().getLong(PERSON_ID, 1);
+        recep = Person.findById(Person.class, personId);
 
-        data = Person.getPersonFromID(personId);
-        setTitle(data.name);
-
-        adapter = new ListAdapter<Message>(Message.getMessages(data)) {
+        List<Message> messages = Select.from(Message.class)
+                .or(Condition.prop("sender").like(recep.name),
+                        Condition.prop("recip").like(recep.name)).list();
+        adapter = new ListAdapter<Message>(messages) {
             @Override
             public View getView(int i, View view, ViewGroup viewGroup) {
                 View root = view;
@@ -60,13 +64,15 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
                 ImageView pic = (ImageView) root.findViewById(R.id.message_image);
                 TextView textView = (TextView) root.findViewById(R.id.message_text);
                 Message data = getItem(i);
-                int gravity = data.recepient == Person.ME ? Gravity.LEFT : Gravity.RIGHT;
-                ((LinearLayout.LayoutParams) pic.getLayoutParams()).gravity |= gravity;
+                int gravity = data.recip.equals(recep.name) ? Gravity.LEFT : Gravity.RIGHT;
+                ((LinearLayout.LayoutParams) pic.getLayoutParams()).gravity = gravity;
                 textView.setGravity(gravity);
-                textView.setText(data.timeSent.toString());
+                //TODO textView.setText(data.timeSent.toString());
                 return root;
             }
         };
+        listView.setAdapter(adapter);
+        setTitle(recep.name);
     }
 
     @Override

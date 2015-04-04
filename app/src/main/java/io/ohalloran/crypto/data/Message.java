@@ -4,66 +4,48 @@ package io.ohalloran.crypto.data;
  * Created by Grace on 4/3/2015.
  */
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.orm.SugarRecord;
 
-public class Message implements Comparable<Message> {
-    public final Person recepient;
-    public final Person sender;
-    private int resourceId;
-    public final String messageText;
-    public final int messageId;
+import java.util.Arrays;
 
-    public final static Map<Couple, List<Message>> messages = new HashMap<>();
-    private static int globalId = 0;
-    public Date timeSent;
+public class Message extends SugarRecord<Message> {
 
-    public Message(Person to1, Person from1, String msg, int resourceId1) {
-        recepient = to1;
-        sender = from1;
-        resourceId = resourceId1;
-        this.messageText = msg;
-        messageId = globalId++;
-        assert recepient == Person.ME || sender == Person.ME;
+    public String messageText;
+    public byte[] imageData;
+    public String sender;
+    public String recip;
 
-        Couple key = new Couple(recepient, sender);
-        List<Message> list = messages.get(key);
-        if (list == null)
-            messages.put(key, list = new ArrayList<>());
-
-        list.add(this);
+    public Message() {
     }
 
-    public static List<Message> getMessages(Person id) {
-        List<Message> mapped = messages.get(new Couple(id, Person.ME));
-        assert mapped != null;
-        if (mapped != null)
-            Collections.sort(mapped);
-        return mapped;
+    public Message(String message, String send, String recip) {
+        this.messageText = message;
+        this.sender = send;
+        this.recip = recip;
     }
 
     @Override
-    public int compareTo(Message message) {
-        return timeSent.compareTo(message.timeSent);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Message message = (Message) o;
+
+        if (!Arrays.equals(imageData, message.imageData)) return false;
+        if (messageText != null ? !messageText.equals(message.messageText) : message.messageText != null)
+            return false;
+        if (!recip.equals(message.recip)) return false;
+        if (!sender.equals(message.sender)) return false;
+
+        return true;
     }
 
-
-    private static class Couple {
-        Person a, b;
-
-        public Couple(Person a, Person b) {
-            this.a = a;
-            this.b = b;
-        }
-
-        @Override
-        public int hashCode() {
-            return a.hashCode() + b.hashCode();
-        }
+    @Override
+    public int hashCode() {
+        int result = messageText != null ? messageText.hashCode() : 0;
+        result = 31 * result + (imageData != null ? Arrays.hashCode(imageData) : 0);
+        result = 31 * result + sender.hashCode();
+        result = 31 * result + recip.hashCode();
+        return result;
     }
-
 }
