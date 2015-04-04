@@ -98,7 +98,7 @@ public class Cryption {
         return mesgDecoded.getMessage();
     }
 
-    public static Bitmap mobiEncode(Bitmap bitm, String str){
+    public static Bitmap mobiEncode(Bitmap bitm, byte[] message){
         {
             //str += END_MESSAGE_COSTANT;
             //str = START_MESSAGE_COSTANT + str;
