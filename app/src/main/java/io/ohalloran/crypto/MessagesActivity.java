@@ -67,7 +67,7 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
                 int gravity = data.recip.equals(recep.name) ? Gravity.LEFT : Gravity.RIGHT;
                 ((LinearLayout.LayoutParams) pic.getLayoutParams()).gravity = gravity;
                 textView.setGravity(gravity);
-                //TODO textView.setText(data.timeSent.toString());
+                textView.setText(data.date);
                 return root;
             }
         };
