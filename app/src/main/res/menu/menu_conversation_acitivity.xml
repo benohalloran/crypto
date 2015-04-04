@@ -1,7 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="io.ohalloran.crypto.MessagesActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+    tools:context="io.ohalloran.crypto.ConversationsActivity">
+    <item
+        android:id="@+id/new_thread"
+        android:title="New Message"
+        android:icon="@android:drawable/ic_input_add"
+        app:showAsAction="ifRoom" />
 </menu>
