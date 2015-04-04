@@ -33,6 +33,7 @@ import io.ohalloran.crypto.it.mobistego.beans.MobiStegoItem;
 import io.ohalloran.crypto.it.mobistego.business.LSB2bit;
 import io.ohalloran.crypto.it.mobistego.utils.Utility;
 
+
 /**
  * Created by Ben on 4/3/2015.
  */
@@ -67,57 +68,53 @@ public class Cryption {
     }
 
     public static String mobiDecode(Bitmap bits){
-        MobiStegoItem result=null;
         List<Bitmap> srcEncodedList = Utility.splitImage(bits);
         String decoded = LSB2bit.decodeMessage(srcEncodedList);
         for(Bitmap bitm:srcEncodedList)
             bitm.recycle();
         if(!Utility.isEmpty(decoded)) {
-            try {
-                result = Utility.saveMobiStegoItem(decoded, bits);
-            } catch (IOException e) {
-                Log.e("Mobi Decode", "Error", e);
-                //e.printStackTrace();
-            }
+            Log.d("Not good", "No message detected");
         }
 
-        return result.getMessage();
+        return decoded;
     }
 
-    public static Bitmap mobiEncode(Bitmap bit, String message){
+    public static Bitmap mobiEncode(Bitmap bitm, String str){
         {
-            MobiStegoItem result = null;
-            //MobiStegoItem mobistego = mobi;
+            int width = bitm.getWidth();
+            int height = bitm.getHeight();
 
-            int pixels[] =new int[bit.getHeight() * bit.getWidth()];
-            bit.getPixels(pixels, 0, bit.getWidth(), 0, 0, bit.getWidth(), bit.getHeight());
+            byte[] msg = str.getBytes();
 
-            int originalHeight=bit.getHeight();
-            int originalWidth=bit.getWidth();
-            List<Bitmap> srcList = Utility.splitImage(bit);
+            LSB2bit.MessageEncodingStatus message = new LSB2bit.MessageEncodingStatus();
+            message.setMessage(str);
+            message.setByteArrayMessage(msg);
+            message.setCurrentMessageIndex(0);
+            message.setMessageEncoded(false);
 
-            bit.recycle();
-            byte[] enc = LSB2bit.encodeMessage(pixels,bit.getWidth(),bit.getHeight(),message);
-                //free memory
-            System.gc();
+            int[] oneD = new int[width * height];
+            bitm.getPixels(oneD, 0, width, 0, 0, width, height);
+            int density = bitm.getDensity();
+            byte[] encodedImage = LSB2bit.encodeMessage(oneD, width, height, str);
 
-            Bitmap destBitmap = Bitmap.createBitmap(originalWidth, originalHeight,
+            int[] oneDMod = Utility.byteArrayToIntArray(encodedImage);
+
+            Bitmap destBitmap = Bitmap.createBitmap(width, height,
                     Bitmap.Config.ARGB_8888);
 
-            destBitmap.setDensity(bit.getDensity());
+            destBitmap.setDensity(density);
             int masterIndex = 0;
-            for (int j = 0; j < originalHeight; j++)
-                for (int i = 0; i < originalWidth; i++) {
+            for (int j = 0; j < height; j++)
+                for (int i = 0; i < width; i++) {
                     // The unique way to write correctly the sourceBitmap, android bug!!!
                     destBitmap.setPixel(i, j, Color.argb(0xFF,
-                            pixels[masterIndex] >> 16 & 0xFF,
-                            pixels[masterIndex] >> 8 & 0xFF,
-                            pixels[masterIndex++] & 0xFF));
+                            oneDMod[masterIndex] >> 16 & 0xFF,
+                            oneDMod[masterIndex] >> 8 & 0xFF,
+                            oneDMod[masterIndex++] & 0xFF));
                     /*if(masterIndex%partialProgr==0)
                         handler.post(mIncrementProgress);*/
                 }
-
-            return destBitmap;
+            return (destBitmap);
         }
     }
     public static byte[] pictureDecode(Bitmap map) {

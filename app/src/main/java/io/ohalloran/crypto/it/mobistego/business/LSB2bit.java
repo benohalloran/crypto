@@ -277,7 +277,7 @@ public class LSB2bit {
 
     }
 
-    private static class MessageEncodingStatus {
+    public static class MessageEncodingStatus {
         private boolean messageEncoded;
         private int currentMessageIndex;
         private byte[] byteArrayMessage;

@@ -82,7 +82,7 @@ public class ConversationsActivity extends ActionBarActivity {
             Log.wtf("waaat",by+"");
         }
 
-        byte[] decodedBytes= Cryption.mobiDecode(image2).getBytes();
+        byte[] decBytes= Cryption.mobiDecode(image2).getBytes();
         pic1.setImageBitmap(image);
         pic2.setImageBitmap(image2);
         //for(byte by: decodedBytes){
@@ -90,17 +90,7 @@ public class ConversationsActivity extends ActionBarActivity {
                 //Log.d("bytes", by + "");
         //    }
         //}
-        int j = decodedBytes.length - 1;
-        while(j>=0){
-            if(decodedBytes[j] == 0xFFFFFFFF){
-                break;
-            }
-            j--;
-        }
-        byte[] decBytes = new byte[j];
-        for(int i = 0; i<decBytes.length; i++){
-            decBytes[i] = decodedBytes[i];
-        }
+
         //for(byte by : decBytes){
             //Log.wtf("waaat",by+"");
         //}
