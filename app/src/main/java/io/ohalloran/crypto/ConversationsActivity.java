@@ -24,7 +24,7 @@ public class ConversationsActivity extends ActionBarActivity {
         setContentView(R.layout.activity_conversations);
         Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.bird2);
         //Log.d("encryption", Cryption.pictureDecode(image));
-        String s = "jacob";
+        String s = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lectus justo, maximus quis aliquet eu, tincidunt quis nunc. Fusce convallis tempus purus quis luctus. Nam pulvinar enim lectus, ac accumsan risus euismod eget. Fusce eu risus id sapien lacinia dictum eget ut elit. Pellentesque id dui eu diam laoreet tempor. Quisque at ipsum a quam consectetur iaculis. Vestibulum eget venenatis magna. Nulla facilisi. Cras imperdiet vel augue vitae feugiat. Morbi vehicula sollicitudin risus, ut faucibus erat vehicula at.";
         testEncodeDecode(image,s);
 
 
@@ -75,12 +75,21 @@ public class ConversationsActivity extends ActionBarActivity {
         byte[] encodedBytes= message.getBytes();
         byte[] decodedBytes= Cryption.pictureDecode(image2);
 
-        for(int i=0; i<encodedBytes.length;i++){
+        try{
+            Log.d("EncodedBytes", new String(encodedBytes,"UTF-8"));
+            Log.d("DecodedBytes", new String(decodedBytes,"UTF-8"));
+        }
+        catch (Exception e){
+            Log.e("testEncodeDecode", "unsupported standard");
+        }
+
+
+        /*for(int i=0; i<encodedBytes.length;i++){
             Log.d("EncodedBytes",encodedBytes[i] + "");
         }
         for(int i=0; i<decodedBytes.length;i++){
             Log.d("DecodedBytes",decodedBytes[i] + "");
-        }
+        }*/
 
     }
 
