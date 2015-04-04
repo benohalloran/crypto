@@ -40,8 +40,8 @@ public class LSB2bit {
     private static int[] binary = {16, 8, 0};
     private static byte[] andByte = {(byte) 0xC0, 0x30, 0x0C, 0x03};
     private static int[] toShift = {6, 4, 2, 0};
-    public static String END_MESSAGE_COSTANT = "#!@";
-    public static String START_MESSAGE_COSTANT = "@!#";
+    public static String END_MESSAGE_COSTANT = "####@@";
+    public static String START_MESSAGE_COSTANT = "@@####";
 
     /**
      * This method represent the core of LSB on 2 bit (Encoding).
@@ -103,74 +103,6 @@ public class LSB2bit {
         return result;
 
     }
-
-    public static List<Bitmap> encodeMessage(List<Bitmap> splittedImages,
-                                             String str) {
-        List<Bitmap> result = new ArrayList<Bitmap>(splittedImages.size());
-        str += END_MESSAGE_COSTANT;
-        str = START_MESSAGE_COSTANT + str;
-        byte[] msg = str.getBytes();
-
-        MessageEncodingStatus message = new MessageEncodingStatus();
-        message.setMessage(str);
-        message.setByteArrayMessage(msg);
-        message.setCurrentMessageIndex(0);
-        message.setMessageEncoded(false);
-
-        Log.i(TAG, "Message lenght " + msg.length);
-        for (Bitmap bitm : splittedImages) {
-            if (!message.isMessageEncoded()) {
-                int width = bitm.getWidth();
-                int height = bitm.getHeight();
-
-                int[] oneD = new int[width * height];
-                bitm.getPixels(oneD, 0, width, 0, 0, width, height);
-                int density = bitm.getDensity();
-                byte[] encodedImage = encodeMessage(oneD, width, height, str);
-
-                int[] oneDMod = Utility.byteArrayToIntArray(encodedImage);
-
-                Bitmap destBitmap = Bitmap.createBitmap(width, height,
-                        Bitmap.Config.ARGB_8888);
-
-                destBitmap.setDensity(density);
-                int masterIndex = 0;
-                for (int j = 0; j < height; j++)
-                    for (int i = 0; i < width; i++) {
-                        // The unique way to write correctly the sourceBitmap, android bug!!!
-                        destBitmap.setPixel(i, j, Color.argb(0xFF,
-                                oneDMod[masterIndex] >> 16 & 0xFF,
-                                oneDMod[masterIndex] >> 8 & 0xFF,
-                                oneDMod[masterIndex++] & 0xFF));
-                    /*if(masterIndex%partialProgr==0)
-                        handler.post(mIncrementProgress);*/
-                    }
-                result.add(destBitmap);
-            } else
-                result.add(bitm);
-        }
-        Log.d(TAG, "Message current index " + message.getCurrentMessageIndex());
-        return result;
-    }
-
-    public static String decodeMessage(List<Bitmap> encodedImages) {
-
-
-        MessageDecodingStatus mesgDecoded = new MessageDecodingStatus();
-
-        for (Bitmap bit : encodedImages) {
-            int[] pixels = new int[bit.getWidth() * bit.getHeight()];
-            bit.getPixels(pixels, 0, bit.getWidth(), 0, 0, bit.getWidth(),
-                    bit.getHeight());
-            byte[] b = null;
-            b = Utility.convertArray(pixels);
-            decodeMessage(b, bit.getWidth(), bit.getHeight(), mesgDecoded);
-            if (mesgDecoded.isEnded())
-                break;
-        }
-        return mesgDecoded.getMessage();
-    }
-
     /**
      * This is the decoding method of LSB on 2 bit.
      *
@@ -179,7 +111,7 @@ public class LSB2bit {
      * @param imgRows Image height.
      * @param mesg    The decoded message.
      */
-    private static void decodeMessage(byte[] oneDPix, int imgCols,
+    public static void decodeMessage(byte[] oneDPix, int imgCols,
                                       int imgRows, MessageDecodingStatus mesg) {
 
         Vector<Byte> v = new Vector<Byte>();
@@ -247,7 +179,7 @@ public class LSB2bit {
         public void finished();
     }
 
-    private static class MessageDecodingStatus {
+    public static class MessageDecodingStatus {
 
         private String message;
         private boolean ended;

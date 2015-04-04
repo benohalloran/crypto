@@ -41,11 +41,20 @@ public class Cryption {
     }
 
     public static String RSAtoString(String enc, PrivateKey p){
+
+
         try {
-            return RSADecrypt(enc.getBytes("UTF-8"), p);
+            byte[] encb = enc.getBytes();
+
+            String encs = "";
+            for(byte b : encb){
+                encs += b + " ";
+            }
+            Log.d("RSAtoStringbyte",encs);
+            return RSADecrypt(encb, p);
         }
         catch (Exception e){
-            Log.e("RSA", "Failure in string to RSA", e);
+            Log.e("RSA", "Failure in RSA to string", e);
         }
         return null;
     }
@@ -78,16 +87,15 @@ public class Cryption {
 
     //Implemented using the open source app MobiStego
     //All thanks go to the AMAZING author of this app
-    public static String mobiDecode(Bitmap bits){
-        List<Bitmap> srcEncodedList = Utility.splitImage(bits);
-        String decoded = LSB2bit.decodeMessage(srcEncodedList);
-        for(Bitmap bitm:srcEncodedList)
-            bitm.recycle();
-        //if(!Utility.isEmpty(decoded)) {
-            //Log.d("Not good", "No message detected");
-        //}
-
-        return decoded.substring(3);
+    public static String mobiDecode(Bitmap bit){
+        LSB2bit.MessageDecodingStatus mesgDecoded = new LSB2bit.MessageDecodingStatus();
+        int[] pixels = new int[bit.getWidth() * bit.getHeight()];
+        bit.getPixels(pixels, 0, bit.getWidth(), 0, 0, bit.getWidth(),
+                bit.getHeight());
+        byte[] b = null;
+        b = Utility.convertArray(pixels);
+        LSB2bit.decodeMessage(b, bit.getWidth(), bit.getHeight(), mesgDecoded);
+        return mesgDecoded.getMessage();
     }
 
     public static Bitmap mobiEncode(Bitmap bitm, String str){
@@ -118,5 +126,17 @@ public class Cryption {
                 }
             return (destBitmap);
         }
+    }
+    //THE HACKIEST THING I HAVE EVER DONE. NEVER DO THIS
+    private String byteToString(byte[] by) {
+        String s = "";
+        for (byte b : by) {
+            s += b + " ";
+        }
+        return s;
+    }
+
+    private byte[] stringToByte(String s){
+        return null;
     }
 }
