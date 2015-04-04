@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.orm.query.Condition;
 import com.orm.query.Select;
 
+import java.util.Collections;
 import java.util.List;
 
 import io.ohalloran.crypto.data.Message;
@@ -55,6 +56,7 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
         List<Message> messages = Select.from(Message.class)
                 .or(Condition.prop("sender").like(recep.name),
                         Condition.prop("recip").like(recep.name)).list();
+        Collections.sort(messages);
         adapter = new ListAdapter<Message>(messages) {
             @Override
             public View getView(int i, View view, ViewGroup viewGroup) {
@@ -66,8 +68,13 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
                 Message data = getItem(i);
                 int gravity = data.recip.equals(recep.name) ? Gravity.LEFT : Gravity.RIGHT;
                 ((LinearLayout.LayoutParams) pic.getLayoutParams()).gravity = gravity;
-                textView.setGravity(gravity);
+
+
                 textView.setText(data.date);
+                textView.setGravity(gravity);
+
+//                pic.forceLayout();
+//                textView.forceLayout();
                 return root;
             }
         };

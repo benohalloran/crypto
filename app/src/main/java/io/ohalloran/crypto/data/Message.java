@@ -4,12 +4,15 @@ package io.ohalloran.crypto.data;
  * Created by Grace on 4/3/2015.
  */
 
+import android.support.annotation.NonNull;
+import android.util.Log;
+
 import com.orm.SugarRecord;
 
 import java.util.Arrays;
 import java.util.Date;
 
-public class Message extends SugarRecord<Message> {
+public class Message extends SugarRecord<Message> implements Comparable<Message> {
 
     public String messageText;
     public byte[] imageData;
@@ -59,4 +62,19 @@ public class Message extends SugarRecord<Message> {
         return time.toString();
     }
 
+    @Override
+    public int compareTo(@NonNull Message message) {
+        /*int YEAR = 5;
+        int MONTH = 1;
+        int DAY = 2;
+        int TIME = 3;
+        String[] myPieces = date.split(" ");
+        String[] otherPieces = message.date.split(" ");*/
+        try {
+            return new Date(date).compareTo(new Date(message.date));
+        } catch (Exception e) {
+            Log.e("Message", "Error sorting", e);
+            return 0;
+        }
+    }
 }
