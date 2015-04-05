@@ -40,9 +40,8 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
 
     ListAdapter<Message> adapter;
     Person recep;
-    Integer images[] = new Integer[]{R.drawable.babyanimal, R.drawable.bunnypuppy, R.drawable.kitten,
-            R.drawable.mr_krabs, R.drawable.puppies, R.drawable.sandy,
-            R.drawable.spongebob, R.drawable.squidward, R.drawable.toofar};
+    Integer images[] = new Integer[]{R.drawable.babyanimal, R.drawable.bunnypuppy,
+            R.drawable.kitten, R.drawable.puppies};
 
 
     @Override
