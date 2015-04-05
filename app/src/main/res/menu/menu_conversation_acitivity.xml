@@ -4,12 +4,12 @@
     tools:context="io.ohalloran.crypto.ConversationsActivity">
     <item
         android:id="@+id/new_thread"
+        android:icon="@drawable/ic_plus_white_36dp"
         android:title="New Message"
-        android:icon="@android:drawable/ic_input_add"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/refresh"
         android:title="Refresh"
-        android:icon="@android:drawable/ic_menu_recent_history"
-        app:showAsAction="withText|always" />
+        android:icon="@drawable/ic_refresh_white_36dp"
+        app:showAsAction="ifRoom" />
 </menu>
