@@ -50,4 +50,9 @@ public class Person {
             return friendKeys = new String[0];
         }
     }
+
+    @Override
+    public String toString() {
+        return userName();
+    }
 }

@@ -33,7 +33,6 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
     public static String PERSON_ID = "person_id";
 
     ListView listView;
-    TextView emptyText;
     EditText messageInput;
     ImageButton imageSource;
     Button sendButton;
