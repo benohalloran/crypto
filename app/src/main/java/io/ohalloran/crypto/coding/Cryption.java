@@ -18,8 +18,8 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.Cipher;
 
-import io.ohalloran.crypto.it.mobistego.business.LSB2bit;
-import io.ohalloran.crypto.it.mobistego.utils.Utility;
+import it.mobistego.business.LSB2bit;
+import it.mobistego.utils.Utility;
 
 
 /**

@@ -12,9 +12,8 @@ import android.widget.ListView;
 import android.widget.QuickContactBadge;
 import android.widget.TextView;
 
+import io.ohalloran.crypto.data.ParseFactory;
 import io.ohalloran.crypto.data.Person;
-import io.ohalloran.crypto.parse.ParseFactory;
-import io.ohalloran.crypto.utils.ListAdapter;
 
 //single conversation
 public class ConversationsActivity extends ActionBarActivity implements ParseFactory.OnParseUpdateListener {

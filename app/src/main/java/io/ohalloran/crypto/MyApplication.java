@@ -2,7 +2,7 @@ package io.ohalloran.crypto;
 
 import com.orm.SugarApp;
 
-import io.ohalloran.crypto.parse.ParseFactory;
+import io.ohalloran.crypto.data.ParseFactory;
 
 /**
  * Created by Ben on 4/4/2015.

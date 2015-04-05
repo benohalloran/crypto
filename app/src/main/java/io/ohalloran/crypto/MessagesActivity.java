@@ -24,9 +24,8 @@ import java.util.List;
 
 import io.ohalloran.crypto.coding.Cryption;
 import io.ohalloran.crypto.data.Message;
+import io.ohalloran.crypto.data.ParseFactory;
 import io.ohalloran.crypto.data.Person;
-import io.ohalloran.crypto.parse.ParseFactory;
-import io.ohalloran.crypto.utils.ListAdapter;
 
 public class MessagesActivity extends ActionBarActivity implements View.OnFocusChangeListener, View.OnClickListener, ParseFactory.OnParseUpdateListener {
     public static String PERSON_ID = "person_id";
