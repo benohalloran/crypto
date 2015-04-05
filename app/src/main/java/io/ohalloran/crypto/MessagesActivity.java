@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -19,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,6 +40,7 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
 
     ListAdapter<Message> adapter;
     Person recep;
+    Integer images[];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,18 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
         messageInput.setOnFocusChangeListener(this);
         imageSource.setOnClickListener(this);
         sendButton.setOnClickListener(this);
+        images =new Integer[]{
+                        R.drawable.babyanimal,
+                        R.drawable.bunnypuppy,
+                        R.drawable.kitten,
+                        R.drawable.mr_krabs,
+                        R.drawable.puppies,
+                        R.drawable.sandy,
+                        R.drawable.spongebob,
+                        R.drawable.squidward,
+                        R.drawable.toofar
+                        };
+
 
         try {
             recep = ParseFactory.getByID(getIntent().getExtras().getString(PERSON_ID));
@@ -120,6 +135,9 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
         switch (view.getId()) {
             case R.id.image_mask:
                 //get the image
+
+
+
                 break;
             case R.id.send_button:
                 //send the message
@@ -133,5 +151,23 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
     @Override
     public void onComplete() {
         adapter.updateData(ParseFactory.getMessages());
+    }
+
+    private void getImage(){
+        ListAdapter<Integer> l = new ListAdapter<Integer>(images) {
+            @Override
+            public View getView(int i, View view, ViewGroup viewGroup) {
+
+                ImageView imf =  new ImageView(MessagesActivity.this);
+                imf.setImageResource(getItem(i));
+                return imf;
+            }
+        };
+
+        ListView im = new ListView(this);
+        im.setAdapter(l);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(im);
+
     }
 }
