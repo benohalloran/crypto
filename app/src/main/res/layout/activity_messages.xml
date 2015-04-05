@@ -46,11 +46,13 @@
             android:hint="Enter message"
             android:textColor="@color/black" />
 
+        <!--android:src="@drawable/abc_btn_radio_to_on_mtrl_000"-->
         <ImageButton
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:id="@+id/image_mask"
-            android:src="@drawable/abc_btn_radio_to_on_mtrl_000"
+            android:scaleType="fitCenter"
+            android:src="@drawable/puppies"
             android:layout_alignParentTop="true"
             android:layout_toLeftOf="@+id/send_button"
             android:layout_toStartOf="@+id/send_button" />

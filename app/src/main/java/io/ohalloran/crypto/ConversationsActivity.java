@@ -96,22 +96,12 @@ public class ConversationsActivity extends ActionBarActivity implements ParseFac
         return false;
     }
 
-    private void sendMessage() {
-        ParseFactory.sendMessage(getBitmap(R.drawable.puppies), "PUPPIES");
-    }
-
     private Bitmap getBitmap(int resId) {
         return BitmapFactory.decodeResource(getResources(), resId);
     }
 
-    boolean sent = false;
-
     @Override
     public void onComplete() {
         adapter.updateData(ParseFactory.getPeople());
-        if (!sent && ParseFactory.getPeople().size() != 0) {
-            sendMessage();
-            sent = true;
-        }
     }
 }
