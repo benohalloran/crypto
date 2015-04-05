@@ -8,16 +8,10 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".ConversationsActivity">
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@android:id/list" />
-
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="EMPTY"
-        android:visibility="gone"
-        android:id="@android:id/text1" />
+        android:text="activity messages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView" />
 
 </RelativeLayout>
