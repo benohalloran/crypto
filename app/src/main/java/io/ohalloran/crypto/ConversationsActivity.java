@@ -87,9 +87,6 @@ public class ConversationsActivity extends ActionBarActivity implements ParseFac
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.new_thread:
-                //TODO new message???
-                return true;
             case R.id.refresh:
                 ParseFactory.refresh(this);
         }
