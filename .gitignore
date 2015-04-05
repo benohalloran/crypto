@@ -38,3 +38,4 @@ build/
 ehthumbs.db
 Thumbs.db
 app/app.iml
+*.apk

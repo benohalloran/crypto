@@ -41,8 +41,7 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
     ListAdapter<Message> adapter;
     Person recep;
     Integer images[] = new Integer[]{R.drawable.babyanimal, R.drawable.bunnypuppy, R.drawable.kitten,
-            R.drawable.mr_krabs, R.drawable.puppies, R.drawable.sandy,
-            R.drawable.spongebob, R.drawable.squidward, R.drawable.toofar};
+            R.drawable.mr_krabs, R.drawable.puppies, R.drawable.cat, R.drawable.tiger};
 
 
     @Override
@@ -160,11 +159,13 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
         final ListAdapter<Integer> adapter = new ListAdapter<Integer>(images) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                View view = convertView != null ? convertView :
-                        getLayoutInflater().inflate(R.layout.message_reveal, parent, false);
-                ImageView img = (ImageView) view.findViewById(R.id.source_image);
+                ImageView img = (ImageView) convertView;
+                if (img == null) {
+                    img = new ImageView(MessagesActivity.this);
+                    img.setScaleType(ImageView.ScaleType.CENTER);
+                }
                 img.setImageResource(images[position]);
-                return view;
+                return img;
             }
         };
 

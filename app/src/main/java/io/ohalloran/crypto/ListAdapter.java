@@ -15,6 +15,7 @@ public abstract class ListAdapter<T> extends BaseAdapter {
         this.data = data;
     }
 
+    @SafeVarargs
     public ListAdapter(T... data) {
         this(Arrays.asList(data));
     }
@@ -36,7 +37,6 @@ public abstract class ListAdapter<T> extends BaseAdapter {
 
     @Override
     public long getItemId(int i) {
-        return 0;
-        //TODO return data.get(i).hashCode();
+       return data.get(i).hashCode();
     }
 }
