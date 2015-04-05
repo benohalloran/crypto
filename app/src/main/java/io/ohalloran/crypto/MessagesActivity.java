@@ -169,5 +169,15 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(im);
 
+
+        im.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                      @Override
+                                      public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                          imageSource.setImageResource();
+                                      }
+                                  }
+
+        );
+
     }
 }
