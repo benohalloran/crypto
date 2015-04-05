@@ -120,16 +120,4 @@ public class Cryption {
         }
     }
 
-    //THE HACKIEST THING I HAVE EVER DONE. NEVER DO THIS
-    private String byteToString(byte[] by) {
-        String s = "";
-        for (byte b : by) {
-            s += b + " ";
-        }
-        return s;
-    }
-
-    private byte[] stringToByte(String s) {
-        return null;
-    }
 }
