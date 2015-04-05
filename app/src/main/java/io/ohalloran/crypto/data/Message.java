@@ -4,7 +4,9 @@ package io.ohalloran.crypto.data;
  * Created by Grace on 4/3/2015.
  */
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -20,12 +22,13 @@ public class Message implements Comparable<Message> {
     }
 
     public byte[] getImageData() {
-        if (imgData == null)
-            return imgData = parse.getBytes("img_blob");
         try {
-            return parse.getParseFile("img_blob").getData();
+            if (imgData == null)
+                return imgData = parse.getParseFile("img_blob").getData();
+            else
+                return parse.getParseFile("img_blob").getData();
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.e("Message Error", "Error decoding file", e);
         }
         return null;
     }

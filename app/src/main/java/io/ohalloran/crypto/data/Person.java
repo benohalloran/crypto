@@ -33,6 +33,10 @@ public class Person {
     }
 
     public String[] friendKeys() {
-        return data.getString("friend_keys").split(";");
+        try {
+            return data.getString("friend_keys").split(";");
+        } catch (NullPointerException e) {
+            return new String[0];
+        }
     }
 }

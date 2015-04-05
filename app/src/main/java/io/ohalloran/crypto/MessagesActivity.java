@@ -1,10 +1,10 @@
 package io.ohalloran.crypto;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -19,8 +19,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.parse.Parse;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,7 +40,10 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
 
     ListAdapter<Message> adapter;
     Person recep;
-    Integer images[];
+    Integer images[] = new Integer[]{R.drawable.babyanimal, R.drawable.bunnypuppy, R.drawable.kitten,
+            R.drawable.mr_krabs, R.drawable.puppies, R.drawable.sandy,
+            R.drawable.spongebob, R.drawable.squidward, R.drawable.toofar};
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,18 +57,6 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
         messageInput.setOnFocusChangeListener(this);
         imageSource.setOnClickListener(this);
         sendButton.setOnClickListener(this);
-        images =new Integer[]{
-                        R.drawable.babyanimal,
-                        R.drawable.bunnypuppy,
-                        R.drawable.kitten,
-                        R.drawable.mr_krabs,
-                        R.drawable.puppies,
-                        R.drawable.sandy,
-                        R.drawable.spongebob,
-                        R.drawable.squidward,
-                        R.drawable.toofar
-                        };
-
 
         try {
             recep = ParseFactory.getByID(getIntent().getExtras().getString(PERSON_ID));
@@ -78,11 +67,11 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
         ParseFactory.refresh(this);
         ArrayList<Message> filtered = new ArrayList<>();
         List<Message> check = ParseFactory.getMessages();
-        if(recep == null){
-            filtered = (ArrayList)check;
-        }else {
-            for(Message i:check){
-                if(recep == ParseFactory.getLocalUser()){
+        if (recep == null) {
+            filtered = (ArrayList) check;
+        } else {
+            for (Message i : check) {
+                if (recep == ParseFactory.getLocalUser()) {
                     filtered.add(i);
                 }
             }
@@ -100,13 +89,9 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
                 int gravity = ParseFactory.getPersonWhoPosted(data).equals(ParseFactory.getLocalUser())
                         ? Gravity.LEFT : Gravity.RIGHT;
                 ((LinearLayout.LayoutParams) pic.getLayoutParams()).gravity = gravity;
-
-
                 textView.setText(data.getUpdatedAt().toString());
                 textView.setGravity(gravity);
-
-//                pic.forceLayout();
-//                textView.forceLayout();
+                pic.setImageBitmap(extractBitmap(data));
                 return root;
             }
 
@@ -136,6 +121,11 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
         });
     }
 
+    private Bitmap extractBitmap(Message m) {
+        return BitmapFactory.decodeByteArray(m.getImageData(), 0,
+                m.getImageData().length, new BitmapFactory.Options());
+    }
+
     @Override
     public void onFocusChange(View view, boolean b) {
         if (view.getId() == R.id.message_input) {
@@ -148,15 +138,15 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
         switch (view.getId()) {
             case R.id.image_mask:
                 //get the image
-
-
-
+                getImage();
                 break;
             case R.id.send_button:
                 //send the message
                 String msg = messageInput.getText().toString();
                 Bitmap img = ((BitmapDrawable) imageSource.getDrawable()).getBitmap();
                 //TODO send for encoding
+                ParseFactory.sendMessage(img, msg);
+                messageInput.setText(null);
                 break;
         }
     }
@@ -166,31 +156,25 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
         adapter.updateData(ParseFactory.getMessages());
     }
 
-    private void getImage(){
-        ListAdapter<Integer> l = new ListAdapter<Integer>(images) {
+    private void getImage() {
+        final ListAdapter<Integer> adapter = new ListAdapter<Integer>(images) {
             @Override
-            public View getView(int i, View view, ViewGroup viewGroup) {
-
-                ImageView imf =  new ImageView(MessagesActivity.this);
-                imf.setImageResource(getItem(i));
-                return imf;
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = convertView != null ? convertView :
+                        getLayoutInflater().inflate(R.layout.message_reveal, parent, false);
+                ImageView img = (ImageView) view.findViewById(R.id.source_image);
+                img.setImageResource(images[position]);
+                return view;
             }
         };
 
-        ListView im = new ListView(this);
-        im.setAdapter(l);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(im);
-
-
-        im.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                      @Override
-                                      public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                          //imageSource.setImageResource();
-                                      }
-                                  }
-
-        );
-
+        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                imageSource.setImageResource(images[i]);
+            }
+        });
+        builder.show();
     }
 }
