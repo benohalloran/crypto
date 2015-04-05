@@ -7,4 +7,9 @@
         android:title="New Message"
         android:icon="@android:drawable/ic_input_add"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/refresh"
+        android:title="Refresh"
+        android:icon="@android:drawable/ic_menu_recent_history"
+        app:showAsAction="withText|always" />
 </menu>

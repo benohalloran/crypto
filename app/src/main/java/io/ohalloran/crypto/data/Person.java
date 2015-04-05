@@ -1,19 +1,38 @@
 package io.ohalloran.crypto.data;
 
-import com.orm.SugarRecord;
+import com.parse.ParseObject;
 
 /**
  * Created by Grace on 4/3/2015.
  */
 
-public class Person extends SugarRecord<Person> {
-    public String name;
+public class Person {
+    private ParseObject data;
 
-    public Person() {
+    public Person(ParseObject p) {
+        data = p;
     }
 
-    public Person(String n) {
-        this.name = n;
+    public String getID() {
+        return data.getObjectId();
     }
 
+    public String userName() {
+        return data.getString("username");
+    }
+
+    public String private_key() {
+        return data.getString("private_key");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Person)
+            return ((Person) o).getID().equals(getID());
+        return false;
+    }
+
+    public String[] friendKeys() {
+        return data.getString("friend_keys").split(";");
+    }
 }

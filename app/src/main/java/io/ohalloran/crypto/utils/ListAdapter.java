@@ -2,9 +2,7 @@ package io.ohalloran.crypto.utils;
 
 import android.widget.BaseAdapter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -17,18 +15,14 @@ public abstract class ListAdapter<T> extends BaseAdapter {
         this.data = data;
     }
 
-    public ListAdapter() {
-        this(new ArrayList<T>());
+    public ListAdapter(T... data) {
+        this(Arrays.asList(data));
     }
 
-    public ListAdapter(Collection<T> collection) {
-        this((T[]) collection.toArray());
+    public void updateData(List<T> people) {
+        data = people;
+        notifyDataSetChanged();
     }
-
-    public ListAdapter(T... array) {
-        this(Arrays.asList(array));
-    }
-
 
     @Override
     public int getCount() {

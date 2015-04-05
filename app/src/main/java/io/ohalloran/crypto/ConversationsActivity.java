@@ -1,7 +1,6 @@
 package io.ohalloran.crypto;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -13,15 +12,12 @@ import android.widget.ListView;
 import android.widget.QuickContactBadge;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import io.ohalloran.crypto.data.Message;
 import io.ohalloran.crypto.data.Person;
+import io.ohalloran.crypto.parse.ParseFactory;
 import io.ohalloran.crypto.utils.ListAdapter;
 
 //single conversation
-public class ConversationsActivity extends ActionBarActivity {
+public class ConversationsActivity extends ActionBarActivity implements ParseFactory.OnParseUpdateListener {
     ListView listView;
     TextView emptyText;
 
@@ -34,9 +30,9 @@ public class ConversationsActivity extends ActionBarActivity {
         listView = (ListView) findViewById(android.R.id.list);
         emptyText = (TextView) findViewById(android.R.id.text1);
 
-        firstTimeConfig();
+        //  firstTimeConfig();
 
-        adapter = new ListAdapter<Person>(Person.listAll(Person.class)) {
+        adapter = new ListAdapter<Person>(ParseFactory.getPeople()) {
             @Override
             public View getView(int i, View view, ViewGroup viewGroup) {
                 View root = view != null ? view :
@@ -46,14 +42,14 @@ public class ConversationsActivity extends ActionBarActivity {
                 TextView name = (TextView) root.findViewById(R.id.header_name);
 
                 Person data = getItem(i);
-                name.setText(data.name);
+                name.setText(data.userName());
 
                 contactBadge.setImageResource(getImgResource(data));
                 return root;
             }
 
             int getImgResource(Person who) {
-                switch (who.name) {
+                switch (who.userName()) {
                     case "Spongebob":
                         return R.drawable.spongebob;
                     case "Mr. Krabs":
@@ -68,43 +64,17 @@ public class ConversationsActivity extends ActionBarActivity {
         };
         listView.setAdapter(adapter);
 
+        ParseFactory.refresh(this);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Person data = adapter.getItem(i);
                 Intent intent = new Intent(ConversationsActivity.this, MessagesActivity.class);
-                intent.putExtra(MessagesActivity.PERSON_ID, (long) data.getId());
+                intent.putExtra(MessagesActivity.PERSON_ID, data.getID());
                 startActivity(intent);
             }
         });
-    }
-
-    private void firstTimeConfig() {
-        boolean mboolean = false;
-
-        SharedPreferences settings = getSharedPreferences("PREFS_NAME", 0);
-        mboolean = settings.getBoolean("FIRST_RUN", false);
-        if (!mboolean) {
-            // do the thing for the first time
-            settings = getSharedPreferences("PREFS_NAME", 0);
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean("FIRST_RUN", true);
-            editor.commit();
-
-            List<Person> list = new ArrayList<>();
-            for (String s : new String[]{"Spongebob", "Mr. Krabs", "Sandy", "Squidward"}) {
-                Person p = new Person(s);
-                list.add(p);
-                p.save();
-            }
-            for (int i = 0; i < 100; i++) {
-                Message mes = new Message(i + "", list.get(i % list.size()).name,
-                        list.get((int) (Math.random() * list.size())).name);
-                mes.save();
-            }
-
-        }
-
     }
 
     @Override
@@ -119,7 +89,14 @@ public class ConversationsActivity extends ActionBarActivity {
             case R.id.new_thread:
                 //TODO new message???
                 return true;
+            case R.id.refresh:
+                ParseFactory.refresh(this);
         }
         return false;
+    }
+
+    @Override
+    public void onComplete() {
+        adapter.updateData(ParseFactory.getPeople());
     }
 }
