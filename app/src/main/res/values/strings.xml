@@ -4,4 +4,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_conversation_acitivity">Write Secure Message</string>
+    <string name="title_conversation_list">Conversations</string>
+    <string name="title_conversation_detail">Conversation Detail</string>
 </resources>

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="io.ohalloran.crypto">
+    package="io.ohalloran.crypto" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- Get the contact images-->
 
+    <!-- Get the contact images -->
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
-        tools:replace="android:icon"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:icon" >
         <meta-data
             android:name="DATABASE"
             android:value="database.db" />
@@ -29,7 +29,7 @@
 
         <activity
             android:name=".ConversationsActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,10 +39,32 @@
         <activity
             android:name=".MessagesActivity"
             android:label="@string/title_activity_conversation_acitivity"
-            android:parentActivityName=".ConversationsActivity">
+            android:parentActivityName=".ConversationsActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ConversationsActivity" />
+        </activity>
+        <activity
+            android:name=".ConversationListActivity"
+            android:label="@string/title_conversation_list"
+            android:parentActivityName=".ConversationsActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.ohalloran.crypto.ConversationsActivity" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ConversationDetailActivity"
+            android:label="@string/title_conversation_detail"
+            android:parentActivityName=".ConversationListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.ohalloran.crypto.ConversationListActivity" />
         </activity>
     </application>
 
