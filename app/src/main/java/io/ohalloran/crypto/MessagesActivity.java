@@ -40,8 +40,8 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
 
     ListAdapter<Message> adapter;
     Person recep;
-    Integer images[] = new Integer[]{R.drawable.babyanimal, R.drawable.bunnypuppy, R.drawable.kitten,
-            R.drawable.mr_krabs, R.drawable.puppies, R.drawable.cat, R.drawable.tiger};
+    Integer images[] = new Integer[]{R.drawable.babyanimal, R.drawable.bunnypuppy,
+            R.drawable.kitten, R.drawable.puppies};
 
 
     @Override
@@ -64,17 +64,18 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
             Log.wtf("Message Activity", "Error loading clicked", e);
         }
         ParseFactory.refresh(this);
-        ArrayList<Message> filtered = new ArrayList<>();
-        List<Message> check = ParseFactory.getMessages();
-        if (recep == null) {
-            filtered = (ArrayList) check;
-        } else {
-            for (Message i : check) {
-                if (recep == ParseFactory.getLocalUser()) {
-                    filtered.add(i);
-                }
-            }
+        List<Message> messages = ParseFactory.getMessages();
+        List<Message> filtered;
+        if (recep == null)
+            filtered = messages;
+        else {
+            filtered = new ArrayList<>();
+            for (Message m : messages)
+                if (m.getPosterID().equals(ParseFactory.getLocalUser().getID()))
+                    filtered.add(m);
         }
+
+
         Collections.sort(filtered); //TODO filter
         adapter = new ListAdapter<Message>(filtered) {
             @Override

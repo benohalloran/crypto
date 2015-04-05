@@ -37,6 +37,6 @@ public abstract class ListAdapter<T> extends BaseAdapter {
 
     @Override
     public long getItemId(int i) {
-       return data.get(i).hashCode();
+        return data.get(i).hashCode();
     }
 }
