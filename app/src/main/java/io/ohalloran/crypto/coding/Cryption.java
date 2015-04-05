@@ -14,9 +14,9 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.Cipher;
 
 import it.mobistego.business.LSB2bit;
 import it.mobistego.utils.Utility;
@@ -27,38 +27,36 @@ import it.mobistego.utils.Utility;
  */
 
 
-
 public class Cryption {
 
-    public static String stringToRSA(String message, PublicKey p){
+    public static String stringToRSA(String message, PublicKey p) {
         try {
             return Base64.encodeToString(RSAEncrypt(message, p), Base64.DEFAULT);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Log.e("RSA", "Failure in string to RSA", e);
         }
         return null;
     }
 
-    public static String RSAtoString(String enc, PrivateKey p){
+    public static String RSAtoString(String enc, PrivateKey p) {
 
 
         try {
-            byte[] encb = Base64.decode(enc,Base64.DEFAULT);
+            byte[] encb = Base64.decode(enc, Base64.DEFAULT);
             return RSADecrypt(encb, p);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Log.e("RSA", "Failure in RSA to string", e);
         }
         return null;
     }
 
-    public static KeyPair getKeyPair(int init)throws NoSuchAlgorithmException, NoSuchPaddingException,
-            InvalidKeyException, IllegalBlockSizeException, BadPaddingException{
+    public static KeyPair getKeyPair(int init) throws NoSuchAlgorithmException, NoSuchPaddingException,
+            InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         KeyPairGenerator pg = KeyPairGenerator.getInstance("RSA");
         pg.initialize(init);
         return pg.generateKeyPair();
     }
+
     //http://stackoverflow.com/questions/12471999/rsa-encryption-decryption-in-android
     public static byte[] RSAEncrypt(final String plain, PublicKey p) throws NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
@@ -75,13 +73,13 @@ public class Cryption {
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.DECRYPT_MODE, p);
         byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
-        String decrypted = new String(decryptedBytes,"UTF-8");
+        String decrypted = new String(decryptedBytes, "UTF-8");
         return decrypted;
     }
 
     //Implemented using the open source app MobiStego
     //All thanks go to the AMAZING author of this app
-    public static String mobiDecode(Bitmap bit){
+    public static String mobiDecode(Bitmap bit) {
         LSB2bit.MessageDecodingStatus mesgDecoded = new LSB2bit.MessageDecodingStatus();
         int[] pixels = new int[bit.getWidth() * bit.getHeight()];
         bit.getPixels(pixels, 0, bit.getWidth(), 0, 0, bit.getWidth(),
@@ -92,7 +90,7 @@ public class Cryption {
         return mesgDecoded.getMessage();
     }
 
-    public static Bitmap mobiEncode(Bitmap bitm, String str){
+    public static Bitmap mobiEncode(Bitmap bitm, String str) {
         {
             //str += END_MESSAGE_COSTANT;
             //str = START_MESSAGE_COSTANT + str;
@@ -121,6 +119,7 @@ public class Cryption {
             return (destBitmap);
         }
     }
+
     //THE HACKIEST THING I HAVE EVER DONE. NEVER DO THIS
     private String byteToString(byte[] by) {
         String s = "";
@@ -130,7 +129,7 @@ public class Cryption {
         return s;
     }
 
-    private byte[] stringToByte(String s){
+    private byte[] stringToByte(String s) {
         return null;
     }
 }
