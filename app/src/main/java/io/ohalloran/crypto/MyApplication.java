@@ -6,19 +6,28 @@ import android.util.Log;
 import com.orm.SugarApp;
 
 import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 import io.ohalloran.crypto.coding.Cryption;
 import io.ohalloran.crypto.data.ParseFactory;
+import io.ohalloran.crypto.data.Person;
 
 /**
  * Created by Ben on 4/4/2015.
  */
-public class MyApplication extends SugarApp {
+public class MyApplication extends SugarApp implements ParseFactory.OnParseUpdateListener {
     @Override
     public void onCreate() {
         super.onCreate();
         ParseFactory.init(getApplicationContext());
-        try {
+
+        ParseFactory.refresh(this);
+
+
+
+
+        /*try {
             KeyPair krabs = Cryption.getKeyPair(1024);
             KeyPair sponge = Cryption.getKeyPair(1024);
             KeyPair squid = Cryption.getKeyPair(1024);
@@ -44,9 +53,29 @@ public class MyApplication extends SugarApp {
         }
         catch (Exception e){
             Log.e("generate keypair","error in gen keypair", e);
-        }
+        }*/
 
 
 
     }
+
+    public void onComplete() {
+        Person krabs = ParseFactory.getLocalUser();
+
+        for(Person person : ParseFactory.getPeople()){
+
+        }
+
+        String krabsPrivateKey = krabs.private_key();
+        String krabsPublicKey = krabs.public_key();
+
+        PublicKey pk = Cryption.getPublicKey(krabsPublicKey);
+        PrivateKey rk = Cryption.getPrivateKey(krabsPrivateKey);
+
+        String enc = Cryption.stringToRSA("Cant come to work today", pk);
+        Log.d("cipher",enc);
+        String dec = Cryption.RSAtoString(enc, rk);
+        Log.d("dec",dec);
+    }
+
 }

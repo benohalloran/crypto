@@ -1,23 +1,30 @@
 package io.ohalloran.crypto.coding;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.Base64;
 import android.util.Log;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.Cipher;
 
+import io.ohalloran.crypto.data.Message;
+import io.ohalloran.crypto.data.ParseFactory;
+import io.ohalloran.crypto.data.Person;
 import it.mobistego.business.LSB2bit;
 import it.mobistego.utils.Utility;
 
@@ -28,7 +35,35 @@ import it.mobistego.utils.Utility;
 
 
 
-public class Cryption {
+    public class Cryption {
+
+    public static PublicKey getPublicKey(String baseKey){
+        try{
+            byte[] keyBytes = Base64.decode(baseKey.getBytes("utf-8"), Base64.DEFAULT);
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            PublicKey key = keyFactory.generatePublic(spec);
+            return key;
+        }
+        catch (Exception e){
+            return null;
+        }
+
+    }
+
+    public static PrivateKey getPrivateKey(String baseKey){
+        try{
+            byte[] keyBytes = Base64.decode(baseKey.getBytes("utf-8"), Base64.DEFAULT);
+            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
+            KeyFactory fact = KeyFactory.getInstance("RSA");
+            PrivateKey priv = fact.generatePrivate(keySpec);
+            return priv;
+        }
+        catch (Exception e){
+            return null;
+        }
+
+    }
 
     public static String stringToRSA(String message, PublicKey p){
         try {
@@ -79,9 +114,23 @@ public class Cryption {
         return decrypted;
     }
 
+    public static String RSAPicDecode(Bitmap bit){
+        String cipher = mobiDecode(bit);
+        return RSAtoString(cipher, getPrivateKey(ParseFactory.getLocalUser().private_key()));
+    }
+
+    public static Bitmap RSAPicEncode(Bitmap bit, String message, Person receiver){
+        String cipher = stringToRSA(message, getPublicKey(receiver.public_key()));
+        return mobiEncode(bit,cipher);
+
+    }
+
     //Implemented using the open source app MobiStego
     //All thanks go to the AMAZING author of this app
     public static String mobiDecode(Bitmap bit){
+
+        //Bitmap bit = BitmapFactory.decodeByteArray(message.getImageData(), 0, message.getImageData().length);
+
         LSB2bit.MessageDecodingStatus mesgDecoded = new LSB2bit.MessageDecodingStatus();
         int[] pixels = new int[bit.getWidth() * bit.getHeight()];
         bit.getPixels(pixels, 0, bit.getWidth(), 0, 0, bit.getWidth(),
@@ -96,6 +145,11 @@ public class Cryption {
         {
             //str += END_MESSAGE_COSTANT;
             //str = START_MESSAGE_COSTANT + str;
+
+            Person localUser = ParseFactory.getLocalUser();
+
+            //if(localUser.userName() == "")
+
             int width = bitm.getWidth();
             int height = bitm.getHeight();
 

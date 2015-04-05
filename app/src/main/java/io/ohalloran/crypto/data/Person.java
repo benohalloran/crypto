@@ -24,6 +24,23 @@ public class Person {
     public String private_key() {
         return data.getString("private_key");
     }
+    public String public_key(){
+        return data.getString("public_key");
+    }
+    public String[] friends(){
+        try {
+            return data.getString("friends").split(";");
+        } catch (NullPointerException e) {
+            return new String[0];
+        }
+    }
+    public String[] friendKeys() {
+        try {
+            return data.getString("friend_keys").split(";");
+        } catch (NullPointerException e) {
+            return new String[0];
+        }
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -32,11 +49,5 @@ public class Person {
         return false;
     }
 
-    public String[] friendKeys() {
-        try {
-            return data.getString("friend_keys").split(";");
-        } catch (NullPointerException e) {
-            return new String[0];
-        }
-    }
+
 }
