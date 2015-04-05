@@ -20,6 +20,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.parse.Parse;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -74,8 +76,19 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
             Log.wtf("Message Activity", "Error loading clicked", e);
         }
         ParseFactory.refresh(this);
-        Collections.sort(ParseFactory.getMessages()); //TODO filter
-        adapter = new ListAdapter<Message>(ParseFactory.getMessages()) {
+        ArrayList<Message> filtered = new ArrayList<>();
+        List<Message> check = ParseFactory.getMessages();
+        if(recep == null){
+            filtered = (ArrayList)check;
+        }else {
+            for(Message i:check){
+                if(recep == ParseFactory.getLocalUser()){
+                    filtered.add(i);
+                }
+            }
+        }
+        Collections.sort(filtered); //TODO filter
+        adapter = new ListAdapter<Message>(filtered) {
             @Override
             public View getView(int i, View view, ViewGroup viewGroup) {
                 View root = view;
@@ -173,7 +186,7 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
         im.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                       @Override
                                       public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                          imageSource.setImageResource();
+                                          //imageSource.setImageResource();
                                       }
                                   }
 
