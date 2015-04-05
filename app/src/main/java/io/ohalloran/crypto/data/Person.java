@@ -9,20 +9,29 @@ import com.parse.ParseObject;
 public class Person {
     private ParseObject data;
 
+    String id, userName, privKey;
+    String[] friendKeys = null;
+
     public Person(ParseObject p) {
         data = p;
     }
 
     public String getID() {
-        return data.getObjectId();
+        if (id == null)
+            return id = data.getObjectId();
+        return id;
     }
 
     public String userName() {
-        return data.getString("username");
+        if (userName == null)
+            return userName = data.getString("username");
+        return userName;
     }
 
     public String private_key() {
-        return data.getString("private_key");
+        if (privKey == null)
+            return privKey = data.getString("private_key");
+        return privKey;
     }
 
     @Override
@@ -33,10 +42,12 @@ public class Person {
     }
 
     public String[] friendKeys() {
+        if (friendKeys != null)
+            return friendKeys;
         try {
-            return data.getString("friend_keys").split(";");
+            return friendKeys = data.getString("friend_keys").split(";");
         } catch (NullPointerException e) {
-            return new String[0];
+            return friendKeys = new String[0];
         }
     }
 }
