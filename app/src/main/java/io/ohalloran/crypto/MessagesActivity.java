@@ -99,7 +99,7 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
                         .setView(popup).setCancelable(true);
                 Bitmap img = BitmapFactory.decodeByteArray(data.getImageData(), 0,
                         data.getImageData().length, new BitmapFactory.Options());
-               ((TextView) popup.findViewById(R.id.decrypted_msg)).setText(Cryption.mobiDecode(img));
+                ((TextView) popup.findViewById(R.id.decrypted_msg)).setText(Cryption.mobiDecode(img));
                 ((ImageView) popup.findViewById(R.id.source_image))
                         .setImageBitmap(img);
                 builder.show();
@@ -111,9 +111,8 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
     @Override
     public void onFocusChange(View view, boolean b) {
         if (view.getId() == R.id.message_input) {
-
-        messageInput.setLines(b ? 3 : 1);
-    }
+            messageInput.setLines(b ? 3 : 1);
+        }
     }
 
     @Override

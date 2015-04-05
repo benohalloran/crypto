@@ -1,17 +1,23 @@
 package io.ohalloran.crypto.data;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.util.Log;
 
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.ohalloran.crypto.coding.Cryption;
 
 /**
  * Created by Ben on 4/4/2015.
@@ -81,7 +87,7 @@ public class ParseFactory {
     public static Person getLocalUser() {
         String userName = getLocalUserName();
         for (Person p : persons)
-            if (p.userName().equals(userName))
+            if (p.userName().equalsIgnoreCase(userName))
                 return p;
         Log.wtf("Parse", "Couldn't local player with username " +
                 userName + " on " + Build.MANUFACTURER);
@@ -96,6 +102,32 @@ public class ParseFactory {
         else
             return "Mr. Krabs";
     }
+
+    public static void sendMessage(Bitmap map, String msg) {
+        Bitmap encoded = Cryption.mobiEncode(map, msg);
+        ParseObject message = new ParseObject("image");
+        Person localUser = getLocalUser();
+        message.put("poster_id", localUser.getID());
+        message.put("img_blob", makeParseFile(encoded));
+        message.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                String tag = "Sent message";
+                if (e == null)
+                    Log.d(tag, "No error");
+                else
+                    Log.e(tag, "With error", e);
+            }
+        });
+    }
+
+    private static ParseFile makeParseFile(Bitmap encoded) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        encoded.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] data = stream.toByteArray();
+        return new ParseFile(data);
+    }
+
 
     public static interface OnParseUpdateListener {
         public void onComplete();

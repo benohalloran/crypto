@@ -6,6 +6,7 @@ package io.ohalloran.crypto.data;
 
 import android.support.annotation.NonNull;
 
+import com.parse.ParseException;
 import com.parse.ParseObject;
 
 import java.util.Date;
@@ -21,7 +22,12 @@ public class Message implements Comparable<Message> {
     public byte[] getImageData() {
         if (imgData == null)
             return imgData = parse.getBytes("img_blob");
-        return imgData;
+        try {
+            return parse.getParseFile("img_blob").getData();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public String getPosterID() {

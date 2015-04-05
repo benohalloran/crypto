@@ -1,6 +1,8 @@
 package io.ohalloran.crypto;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -94,8 +96,22 @@ public class ConversationsActivity extends ActionBarActivity implements ParseFac
         return false;
     }
 
+    private void sendMessage() {
+        ParseFactory.sendMessage(getBitmap(R.drawable.puppies), "PUPPIES");
+    }
+
+    private Bitmap getBitmap(int resId) {
+        return BitmapFactory.decodeResource(getResources(), resId);
+    }
+
+    boolean sent = false;
+
     @Override
     public void onComplete() {
         adapter.updateData(ParseFactory.getPeople());
+        if (!sent && ParseFactory.getPeople().size() != 0) {
+            sendMessage();
+            sent = true;
+        }
     }
 }
