@@ -111,8 +111,9 @@ public class MessagesActivity extends ActionBarActivity implements View.OnFocusC
     @Override
     public void onFocusChange(View view, boolean b) {
         if (view.getId() == R.id.message_input) {
-            messageInput.setLines(b ? 3 : 1);
-        }
+
+        messageInput.setLines(b ? 3 : 1);
+    }
     }
 
     @Override
