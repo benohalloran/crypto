@@ -9,36 +9,53 @@ import com.parse.ParseObject;
 public class Person {
     private ParseObject data;
 
+    String id, userName, privKey, pubKey;
+    String[] friendKeys = null;
+    String[] friends = null;
+
     public Person(ParseObject p) {
         data = p;
     }
 
     public String getID() {
-        return data.getObjectId();
+        if (id == null)
+            return id = data.getObjectId();
+        return id;
     }
 
     public String userName() {
-        return data.getString("username");
+        if (userName == null)
+            return userName = data.getString("username");
+        return userName;
     }
 
     public String private_key() {
-        return data.getString("private_key");
+        if (privKey == null)
+            return privKey = data.getString("private_key");
+        return privKey;
     }
     public String public_key(){
-        return data.getString("public_key");
+        if(pubKey == null)
+            return pubKey = data.getString("public_key");
+        return pubKey;
+
     }
     public String[] friends(){
+        if (friends != null)
+            return friends;
         try {
-            return data.getString("friends").split(";");
+            return friends = data.getString("friends").split(";");
         } catch (NullPointerException e) {
-            return new String[0];
+            return friends = new String[0];
         }
     }
     public String[] friendKeys() {
+        if (friendKeys != null)
+            return friendKeys;
         try {
-            return data.getString("friend_keys").split(";");
+            return friendKeys = data.getString("friend_keys").split(";");
         } catch (NullPointerException e) {
-            return new String[0];
+            return friendKeys = new String[0];
         }
     }
 
@@ -47,6 +64,11 @@ public class Person {
         if (o instanceof Person)
             return ((Person) o).getID().equals(getID());
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return userName();
     }
 
 
