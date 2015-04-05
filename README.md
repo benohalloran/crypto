@@ -5,8 +5,8 @@ Dandyhacks 2015
 
 Screenshots
 ===========
-[![Home](/gallery/Screenshot_2015-04-05-05-20-18.png)][![Decrypted](/gallery/Screenshot_2015-04-05-05-21-03.png)]
-[![Converstation](/gallery/Screenshot_2015-04-05-05-20-44.png)]
+![Home](/gallery/Screenshot_2015-04-05-05-20-18.png)![Decrypted](/gallery/Screenshot_2015-04-05-05-21-03.png)
+![Converstation](/gallery/Screenshot_2015-04-05-05-20-44.png)
 
 Currently a techdemo of sorts.
 Only can communicate with a certain number of preset pictures, but the fun part is that an arbitrary message can be encoded inside the picture that can be extracted by others with this app
