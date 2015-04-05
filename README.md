@@ -9,4 +9,4 @@ Refresh icon is from [Material design icons](http://materialdesignicons.com/).
 
 Backend is [Parse.com](parse.com)
 
-Encryption is handled with help from [Mobistego](http://mobistego.sourceforge.net/).
+Encryption is handled with help from [Mobistego](https://github.com/paspao/MobiStego).
